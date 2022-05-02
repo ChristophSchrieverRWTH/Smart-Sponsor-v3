@@ -133,7 +133,7 @@ const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
 
   if (isOwnerV) {
     return (
-      <div className="pt-5">
+      <div>
         <div className="text-center m-5 row justify-content-between">
           {addCard}
           <div className="card col-md-5 mr-5">

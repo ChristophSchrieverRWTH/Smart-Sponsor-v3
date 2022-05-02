@@ -1,5 +1,5 @@
 import './nav.css'
-const NavComp = ({ active, onClick }) => {
+const NavComp = ({ active, onClick, user }) => {
   return (
     <>
         <nav className="navbar navbar-expand-lg navbar-light rounded" >
@@ -15,6 +15,7 @@ const NavComp = ({ active, onClick }) => {
               </li>
             </ul>
         </nav>
+        <h3 className="text-center mt-4">Logged in as: {user}</h3>
     </>
   )
 }

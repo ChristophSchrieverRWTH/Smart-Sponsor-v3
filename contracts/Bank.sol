@@ -7,6 +7,7 @@ contract Bank is Ownable {
 
     struct Coin {
         uint256 coinID;
+        address permit;
         string[] senderConditions;
         string[] receiverConditions;
     }
@@ -43,7 +44,7 @@ contract Bank is Ownable {
         require(_amount != 0, "Mint-amount unspecified");
         // Create new Coins and push them to array
         for(uint256 i = 0; i < _amount; i++){
-            coins.push(Coin(coinID, _senderConditions, _receiverConditions));
+            coins.push(Coin(coinID, address(0), _senderConditions, _receiverConditions));
             owners.push(_owner);
             allowed.push(address(0));
             emit coinMinted(coinID, _owner);
@@ -72,6 +73,7 @@ contract Bank is Ownable {
             }
             coins[currID].senderConditions = empty;
             coins[currID].receiverConditions = empty;
+            coins[currID].permit = address(0);
             owners[currID] = _receiver;
             allowed[currID] = address(0);
             emit coinTransfer(currID);
@@ -100,6 +102,7 @@ contract Bank is Ownable {
             }
             coins[currID].senderConditions = senderConditions;
             coins[currID].receiverConditions = receiverConditions;
+            coins[currID].permit = address(0);
             owners[currID] = _receiver;
             allowed[currID] = address(0);
             emit coinTransfer(currID);
@@ -114,19 +117,25 @@ contract Bank is Ownable {
         for(uint256 i = 0; i < _coins.length; i++){
             uint256 currID = _coins[i];
             require(owners[currID] == msg.sender, "You are not the owner of all specified coins");
+            coins[currID].permit = _target;
             allowed[currID] = _target;
             emit coinPermitted(currID);
         }
     }
 
     function wallet() public view returns (Coin[] memory) {  // TO-DO WHY DOES IT DOUBLE
-        Coin[] memory balance = new Coin[](coinID);
-        Coin memory defaultCoin = Coin(coinID + 1, empty, empty);
+        uint256 amount = 0;
         for(uint i = 0; i < coinID; i++){
             if(owners[i] == msg.sender){
-                balance[i] = coins[i];
-            } else {
-                balance[i] = defaultCoin;
+                amount++;
+            }
+        }
+        Coin[] memory balance = new Coin[](amount);
+        uint256 count = 0;
+        for(uint i = 0; count < amount; i++){
+            if(owners[i] == msg.sender){
+                balance[count] = coins[i];
+                count++;
             }
         }
         return balance;

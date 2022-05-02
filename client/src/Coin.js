@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Coin = ({ coin, onPermit }) => {
+const Coin = ({ coin, onPermit, onNormal, onAttach }) => {
     const [permit, setPermit] = useState({ address: '', result: null })
     const [normal, setNormal] = useState({ address: '', result: null })
     const [attach, setAttach] = useState({ address: '', result: null }) // TO-DO create ability to set multiple conds
@@ -18,6 +18,16 @@ const Coin = ({ coin, onPermit }) => {
         setPermit({ address: '', result: response })
     }
 
+    const handleNormal = async (e) => {
+        e.preventDefault();
+        await onNormal(coin.coinID, normal.address);
+    }
+
+    const handleAttach = async (e) => {
+        e.preventDefault();
+        await onAttach(coin.coinID, attach.address);
+    }
+
     permitModal = (
         <div className="modal fade" id={coin.coinID + "permitModal"} tabIndex="-1" role="dialog" aria-labelledby="permitModalCenterTitle" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered" role="document">
@@ -33,7 +43,7 @@ const Coin = ({ coin, onPermit }) => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" onClick={handlePermit}>Confirm</button>
+                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handlePermit}>Confirm</button>
                     </div>
                 </div>
             </div>
@@ -55,7 +65,7 @@ const Coin = ({ coin, onPermit }) => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" onClick={handlePermit}>Confirm</button>
+                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleNormal}>Confirm</button>
                     </div>
                 </div>
             </div>
@@ -77,7 +87,7 @@ const Coin = ({ coin, onPermit }) => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" onClick={handlePermit}>Confirm</button>
+                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleAttach}>Confirm</button>
                     </div>
                 </div>
             </div>
@@ -112,9 +122,9 @@ const Coin = ({ coin, onPermit }) => {
         ))
     }
 
-    if (coin.permit === "") {
+    if (coin.permit === "0x0000000000000000000000000000000000000000") {
         permitHTML = (
-            <div>
+            <div className="text-center">
                 None
                 <br />
                 <button type="button" className="btn btn-primary mt-3" data-toggle="modal" data-target={"#" + coin.coinID + "permitModal"}>
@@ -136,7 +146,7 @@ const Coin = ({ coin, onPermit }) => {
                 {attachModal}
                 {transactionHTML}
             </td>
-            <td className="text-center">
+            <td>
                 {permitModal}
                 {permitHTML}
             </td>
