@@ -16,8 +16,8 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
   if (isOwnerB) {
     return (
       <div className="text-center m-5 row">
-        <div className="col-3"></div>
-        <div className="card col-5">
+        <div className="col-4"></div>
+        <div className="card col-4">
           <div className="card-body">
             <h2 className="card-title pb-3">Mint new Coins</h2>
             <form onSubmit={handleMint}>

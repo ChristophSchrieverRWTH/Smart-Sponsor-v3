@@ -147,8 +147,8 @@ const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
     return (
       <>
         <div className="text-center m-5 row">
-          <div className="col-3"></div>
-          <div className="col-5">
+          <div className="col-4"></div>
+          <div className="col-4">
             {checkCard}
           </div>
         </div>

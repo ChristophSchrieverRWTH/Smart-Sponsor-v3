@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import VerifyContract from "./contracts/Verify.json";
 import BankContract from "./contracts/Bank.json"
+import SponsorContract from "./contracts/Sponsor.json"
 import getWeb3 from "./getWeb3";
 import NavComp from "./Navcomp";
 import Bank from "./Bank";
@@ -8,7 +9,7 @@ import Verify from "./Verify";
 import Sponsor from "./Sponsor";
 
 class App extends Component {
-  state = { web3: null, account: null, verifyC: null, isOwnerV: null, bankC: null, isOwnerB: null, website: 'bank', coins: 'default' };
+  state = { web3: null, account: null, verifyC: null, isOwnerV: null, bankC: null, isOwnerB: null, sponsorC: null, website: 'sponsor', coins: 'default', offers: 'default' };
 
   componentDidMount = async () => {
     try {
@@ -21,6 +22,7 @@ class App extends Component {
       const networkId = await web3.eth.net.getId();
       const deployedNetworkV = VerifyContract.networks[networkId];
       const deployedNetworkB = BankContract.networks[networkId];
+      const deployedNetworkS = SponsorContract.networks[networkId];
       const verifyInstance = new web3.eth.Contract(
         VerifyContract.abi,
         deployedNetworkV && deployedNetworkV.address,
@@ -29,13 +31,17 @@ class App extends Component {
         BankContract.abi,
         deployedNetworkB && deployedNetworkB.address,
       );
+      const sponsorInstance = new web3.eth.Contract(
+        SponsorContract.abi,
+        deployedNetworkS && deployedNetworkS.address,
+      );
       const ownerV = await verifyInstance.methods.owner().call();
       const isOwnerV = (ownerV === accounts[0]);
       const ownerB = await bankInstance.methods.owner().call();
       const isOwnerB = (ownerB === accounts[0]);
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, account: accounts[0], verifyC: verifyInstance, bankC: bankInstance, isOwnerV, isOwnerB, });
+      this.setState({ web3, account: accounts[0], verifyC: verifyInstance, bankC: bankInstance, sponsorC: sponsorInstance, isOwnerV, isOwnerB, });
       await this.updateCoins();
 
     } catch (error) {
@@ -156,6 +162,27 @@ class App extends Component {
     }
   }
 
+  updateOffers = async () => {   // call this method after moving coins
+    try {
+      const response = await this.state.sponsorC.methods.getOffers().call();
+      let offers = [];
+      for (var i = 0; i < response.length; i++) { // TO-DO continue here
+        let curr = response[i];
+        let cutCoin = { coinID: parseInt(curr.coinID), senderConditions: curr.senderConditions, receiverConditions: curr.receiverConditions, permit: curr.permit }; // coin.permitted
+        offers.push(cutCoin);
+
+      }
+      if (offers.length === 0) {
+        this.setState({ coins: 'empty' });
+        return;
+      }
+      this.setState({ coins: offers });
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong (updateOffers)");
+    }
+  }
+
   mint = async (address, amount, senderConditions, receiverConditions) => {
     try {
       senderConditions = senderConditions.split(', ');
@@ -174,6 +201,24 @@ class App extends Component {
     }
   }
 
+  applyOffer = async (address, amount, senderConditions, receiverConditions) => {
+    try {
+      
+    } catch(error) {
+      console.log(error);
+      alert("Something went wrong (applyOffer)")
+    }
+  }
+
+  createOffer = async (address, amount, senderConditions, receiverConditions) => {
+    try {
+      
+    } catch(error) {
+      console.log(error);
+      alert("Something went wrong (createOffer)")
+    }
+  }
+
   render() {
     let activeWebsite;
     if (!this.state.web3 || this.state.coins === 'default') {
@@ -182,7 +227,7 @@ class App extends Component {
     if (this.state.website === 'bank') {
       activeWebsite = <Bank wallet={this.state.coins} onPermit={this.permit} onNormal={this.normal} onAttach={this.attach} onMint={this.mint} isOwnerB={this.state.isOwnerB}/>;
     } else if (this.state.website === 'sponsor') {
-      activeWebsite = <Sponsor />;
+      activeWebsite = <Sponsor offers={this.state.offers} onCreate={this.createOffer} onApply={this.applyOffer}/>;
     } else if (this.state.website === 'verify') {
       activeWebsite = <Verify onAdd={this.addCertificate} onCheck={this.checkCertificate} onTime={this.updateTime} isOwnerV={this.state.isOwnerV} />;
     }
