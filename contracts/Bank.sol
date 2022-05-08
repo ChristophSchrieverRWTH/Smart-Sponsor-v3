@@ -123,7 +123,7 @@ contract Bank is Ownable {
         }
     }
 
-    function wallet() public view returns (Coin[] memory) {  // TO-DO WHY DOES IT DOUBLE
+    function wallet() public view returns (Coin[] memory) { 
         uint256 amount = 0;
         for(uint i = 0; i < coinID; i++){
             if(owners[i] == msg.sender){

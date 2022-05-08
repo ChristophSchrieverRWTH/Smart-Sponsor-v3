@@ -2,10 +2,9 @@ import Offer from "./Offer.js"
 
 const Sponsor = ({offers, onCreate, onApply}) => {
 
- /* let tablebody = offers.map((off) => (
-    <Offer key={"c" + off.coinID} offer={off} onApply={onApply}/>
-  ))*/
-  let tablebody = <p1>body</p1>
+ let tablebody = offers.map((off) => (
+    <Offer key={"o" + off.offerID} offer={off} onApply={onApply}/>
+  ))
 
   let tablehead = (
     <div className="ml-5 mr-5 mt-4">
@@ -13,11 +12,12 @@ const Sponsor = ({offers, onCreate, onApply}) => {
         <table className="table ">
           <thead>
             <tr>
-              <th scope="col">Coin ID</th>
+              <th scope="col">Offer ID</th>
+              <th scrope="col">Donated Coins</th>
               <th scope="col">Sender Conditions</th>
               <th scope="col">Receiver Conditions</th>
-              <th scrope="col">Transasctions</th>
-              <th scope="col">Permitted Address</th>
+              <th scope="col">Donor</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
@@ -28,16 +28,9 @@ const Sponsor = ({offers, onCreate, onApply}) => {
     </div>
   )
 
- 
-
-
-
-
-
-
   return (
     <div>
-      <h2>Sponsor online</h2>
+      {tablehead}
     </div>
   )
 }

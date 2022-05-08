@@ -43,7 +43,7 @@ class App extends Component {
       // example of interacting with the contract's methods.
       this.setState({ web3, account: accounts[0], verifyC: verifyInstance, bankC: bankInstance, sponsorC: sponsorInstance, isOwnerV, isOwnerB, });
       await this.updateCoins();
-
+      await this.updateOffers();
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -168,15 +168,16 @@ class App extends Component {
       let offers = [];
       for (var i = 0; i < response.length; i++) { // TO-DO continue here
         let curr = response[i];
-        let cutCoin = { coinID: parseInt(curr.coinID), senderConditions: curr.senderConditions, receiverConditions: curr.receiverConditions, permit: curr.permit }; // coin.permitted
-        offers.push(cutCoin);
+        let cutOffer = { offerID: parseInt(curr.offerID), senderConditions: curr.senderConditions,
+           receiverConditions: curr.receiverConditions, amount: curr.coinIDs.length, donor: curr.donor };
+        offers.push(cutOffer);
 
       }
       if (offers.length === 0) {
-        this.setState({ coins: 'empty' });
+        this.setState({ offers: 'empty' });
         return;
       }
-      this.setState({ coins: offers });
+      this.setState({ offers: offers });
     } catch (error) {
       console.log(error);
       alert("Something went wrong (updateOffers)");
@@ -201,9 +202,9 @@ class App extends Component {
     }
   }
 
-  applyOffer = async (address, amount, senderConditions, receiverConditions) => {
+  applyOffer = async (offerID) => {
     try {
-      
+      console.log(offerID)
     } catch(error) {
       console.log(error);
       alert("Something went wrong (applyOffer)")
@@ -212,7 +213,7 @@ class App extends Component {
 
   createOffer = async (address, amount, senderConditions, receiverConditions) => {
     try {
-      
+      console.log("Created")
     } catch(error) {
       console.log(error);
       alert("Something went wrong (createOffer)")
@@ -221,7 +222,7 @@ class App extends Component {
 
   render() {
     let activeWebsite;
-    if (!this.state.web3 || this.state.coins === 'default') {
+    if (!this.state.web3 || this.state.coins === 'default' || this.state.offers === 'default') {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     if (this.state.website === 'bank') {
