@@ -204,16 +204,31 @@ class App extends Component {
 
   applyOffer = async (offerID) => {
     try {
-      console.log(offerID)
+      await this.state.sponsorC.methods.applyOffer(offerID).send({from: this.state.account});
+      await this.updateOffers();
     } catch(error) {
       console.log(error);
-      alert("Something went wrong (applyOffer)")
+      alert("You don't fullfil all conditions.")
     }
   }
 
-  createOffer = async (address, amount, senderConditions, receiverConditions) => {
+  createOffer = async (senderConditions, receiverConditions, coins) => {
     try {
-      console.log("Created")
+      coins = coins.split(', ');
+      coins.forEach(e => {
+        parseInt(e);
+      });
+      senderConditions = senderConditions.split(', ');
+      receiverConditions = receiverConditions.split(', ');
+      if(senderConditions.length === 1 && senderConditions[0] === ""){
+        senderConditions = [];
+      }
+      if(receiverConditions.length === 1 && receiverConditions[0] === ""){
+        receiverConditions = [];
+      }
+      let response = await this.state.sponsorC.methods.createOffer(senderConditions, receiverConditions, coins).send({from: this.state.account});
+      await this.updateOffers();
+      return response;
     } catch(error) {
       console.log(error);
       alert("Something went wrong (createOffer)")

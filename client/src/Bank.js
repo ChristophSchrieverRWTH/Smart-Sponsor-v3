@@ -57,7 +57,7 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
 
   if (wallet === 'empty') { // TO-DO
     return (
-      <div class="page-hero d-flex align-items-center justify-content-center makemid">
+      <div className="page-hero d-flex align-items-center justify-content-center makemid">
         <h1>
           <em>You currently have no Coins. For more Information visit your nearest bank.</em>
         </h1>

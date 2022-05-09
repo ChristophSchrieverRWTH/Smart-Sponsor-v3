@@ -7,7 +7,7 @@ const Offer = ({ offer, onApply }) => {
 
   const handleApply = async (e) => {
     e.preventDefault();
-    const response = await onApply(offer.offerID);
+    await onApply(offer.offerID);
   }
 
   if (offer.senderConditions.length === 0) {
