@@ -218,15 +218,8 @@ class App extends Component {
       coins.forEach(e => {
         parseInt(e);
       });
-      senderConditions = senderConditions.split(', ');
-      receiverConditions = receiverConditions.split(', ');
-      if(senderConditions.length === 1 && senderConditions[0] === ""){
-        senderConditions = [];
-      }
-      if(receiverConditions.length === 1 && receiverConditions[0] === ""){
-        receiverConditions = [];
-      }
       let response = await this.state.sponsorC.methods.createOffer(senderConditions, receiverConditions, coins).send({from: this.state.account});
+      await this.updateCoins();
       await this.updateOffers();
       return response;
     } catch(error) {

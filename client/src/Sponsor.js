@@ -1,8 +1,11 @@
 import Offer from "./Offer.js"
+import Condition from "./Condition.js"
 import { useState } from "react"
+import { GoPlus } from 'react-icons/go'
+
 
 const Sponsor = ({ offers, onCreate, onApply }) => {
-  const [create, setCreate] = useState({ coins: "", senderConditions: "", receiverConditions: "", result: null })
+  const [create, setCreate] = useState({ coins: "", senderConditions: "", receiverConditions: "", result: null, senderList: [], receiverList: [] })
   let createBox;
 
   if (offers === 'empty') { // TO-DO
@@ -15,9 +18,53 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
     )
   }
 
+  const addCreateSender = () => {
+    let toSet = create.senderConditions;
+    let copyArray = create.senderList;
+    if (toSet === '' || copyArray.includes(toSet)) {
+      setCreate({...create, senderConditions: ''})
+      return;
+    }
+    copyArray.push(toSet);
+    setCreate({ ...create, senderList: copyArray, senderConditions: '' })
+  }
+
+  const delCreateSender = (target) => {
+    console.log(target)
+    let newArray = [];
+    create.senderList.forEach((e) => {
+      if(e !== target){
+        newArray.push(e);
+      }
+    })
+    setCreate({...create, senderList: newArray})
+  }
+
+  const addCreateReceiver = () => {
+    let toSet = create.receiverConditions;
+    let copyArray = create.receiverList;
+    if (toSet === '' || copyArray.includes(toSet)) {
+      setCreate({...create, receiverConditions: ''})
+      return;
+    }
+    copyArray.push(toSet);
+    setCreate({ ...create, receiverList: copyArray, receiverConditions: '' })
+  }
+
+  const delCreateReceiver = (target) => {
+    console.log(target)
+    let newArray = [];
+    create.receiverList.forEach((e) => {
+      if(e !== target){
+        newArray.push(e);
+      }
+    })
+    setCreate({...create, receiverList: newArray})
+  }
+
   const handleCreate = async (e) => {
     e.preventDefault();
-    await onCreate(create.senderConditions, create.receiverConditions, create.coins);
+    await onCreate(create.senderList, create.receiverList, create.coins);
   }
 
   if (create.result !== null) {
@@ -30,6 +77,14 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
 
   let tablebody = offers.map((off) => (
     <Offer key={"o" + off.offerID} offer={off} onApply={onApply} />
+  ))
+
+  let existingSender = create.senderList.map((cond) => (
+    <Condition key={"es_" + cond} cond={cond} handler={delCreateSender}/>
+  ))
+
+  let existingReceiver = create.receiverList.map((cond) => (
+    <Condition key={"es_" + cond} cond={cond} handler={delCreateReceiver}/>
   ))
 
   let tablehead = (
@@ -75,15 +130,20 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
                 <div className="input-group">
                   <input className="form-control" id="inputCreateSender" aria-describedby="CreateSenderHelp" placeholder="Enter Sender Condition"
                     value={create.senderConditions} onChange={(e) => setCreate({ ...create, senderConditions: e.target.value })} ></input>
+                  <GoPlus size={'2em'} color={'green'} onClick={addCreateSender} cursor={'pointer'}/>
                 </div>
               </div>
+              {existingSender}
               <div className="form-group">
                 <label htmlFor="inputCreateReceiver">Receiver Conditions</label>
                 <div className="input-group">
-                  <input className="form-control" id="inputCreateReceiver" aria-describedby="CreateReceiverHelp" placeholder="Enter Receiver Condition"
-                    value={create.receiverConditions} onChange={(e) => setCreate({ ...create, receiverConditions: e.target.value })} ></input>
+                  <input className="form-control mr-2" id="inputCreateReceiver" aria-describedby="CreateReceiverHelp" placeholder="Enter Receiver Condition"
+                    value={create.receiverConditions} onChange={(e) => setCreate({ ...create, receiverConditions: e.target.value })} >
+                  </input>
+                  <GoPlus size={'2em'} color={'green'} onClick={addCreateReceiver} cursor={'pointer'}/>
                 </div>
               </div>
+              {existingReceiver}
               <button type="submit" className="btn btn-primary">Submit</button>
             </form>
             {createBox}
