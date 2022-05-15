@@ -9,7 +9,7 @@ import Verify from "./Verify";
 import Sponsor from "./Sponsor";
 
 class App extends Component {
-  state = { web3: null, account: null, verifyC: null, isOwnerV: null, bankC: null, isOwnerB: null, sponsorC: null, website: 'sponsor', coins: 'default', offers: 'default' };
+  state = { web3: null, account: null, verifyC: null, isOwnerV: null, bankC: null, isOwnerB: null, sponsorC: null, website: 'bank', coins: 'default', offers: 'default' };
 
   componentDidMount = async () => {
     try {
@@ -116,9 +116,9 @@ class App extends Component {
     }
   }
 
-  permit = async (id, address) => {
+  permit = async (IDs, address) => {
     try {
-      await this.state.bankC.methods.permit(address, [id]).send({from: this.state.account})
+      await this.state.bankC.methods.permit(address, IDs).send({from: this.state.account})
       await this.updateCoins();
     } catch(error) {
       console.log(error);
@@ -126,9 +126,9 @@ class App extends Component {
     }
   }
 
-  normal = async (id, address) => {
+  normal = async (IDs, address) => {
     try {
-      await this.state.bankC.methods.normalTransfer(address, [id]).send({from: this.state.account})
+      await this.state.bankC.methods.normalTransfer(address, IDs).send({from: this.state.account})
       await this.updateCoins();
     } catch(error) {
       console.error(error)
@@ -144,9 +144,9 @@ class App extends Component {
     }
   }
 
-  attach = async (id, address) => {
+  attach = async (IDs, address) => {
     try {
-      await this.state.bankC.methods.attachTransfer(address, [id], [], []).send({from: this.state.account})
+      await this.state.bankC.methods.attachTransfer(address, IDs, [], []).send({from: this.state.account})
       await this.updateCoins();
     } catch(error) {
       console.log(error);
@@ -206,6 +206,7 @@ class App extends Component {
     try {
       await this.state.sponsorC.methods.applyOffer(offerID).send({from: this.state.account});
       await this.updateOffers();
+      await this.updateCoins();
     } catch(error) {
       console.log(error);
       alert("You don't fullfil all conditions.")
@@ -214,10 +215,6 @@ class App extends Component {
 
   createOffer = async (senderConditions, receiverConditions, coins) => {
     try {
-      coins = coins.split(', ');
-      coins.forEach(e => {
-        parseInt(e);
-      });
       let response = await this.state.sponsorC.methods.createOffer(senderConditions, receiverConditions, coins).send({from: this.state.account});
       await this.updateCoins();
       await this.updateOffers();
@@ -236,7 +233,7 @@ class App extends Component {
     if (this.state.website === 'bank') {
       activeWebsite = <Bank wallet={this.state.coins} onPermit={this.permit} onNormal={this.normal} onAttach={this.attach} onMint={this.mint} isOwnerB={this.state.isOwnerB}/>;
     } else if (this.state.website === 'sponsor') {
-      activeWebsite = <Sponsor offers={this.state.offers} onCreate={this.createOffer} onApply={this.applyOffer}/>;
+      activeWebsite = <Sponsor offers={this.state.offers} wallet={this.state.coins} onCreate={this.createOffer} onApply={this.applyOffer}/>;
     } else if (this.state.website === 'verify') {
       activeWebsite = <Verify onAdd={this.addCertificate} onCheck={this.checkCertificate} onTime={this.updateTime} isOwnerV={this.state.isOwnerV} />;
     }

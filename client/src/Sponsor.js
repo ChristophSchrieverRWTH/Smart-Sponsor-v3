@@ -1,11 +1,11 @@
 import Offer from "./Offer.js"
 import Condition from "./Condition.js"
+import SponsorCoin from "./SponsorCoin.js"
 import { useState } from "react"
 import { GoPlus } from 'react-icons/go'
 
-
-const Sponsor = ({ offers, onCreate, onApply }) => {
-  const [create, setCreate] = useState({ coins: "", senderConditions: "", receiverConditions: "", result: null, senderList: [], receiverList: [] })
+const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
+  const [create, setCreate] = useState({ selectedCoin: '', senderConditions: "", receiverConditions: "", result: null, coins: [], senderList: [], receiverList: [] })
   let createBox;
 
   if (offers === 'empty') { // TO-DO
@@ -18,11 +18,40 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
     )
   }
 
+  if (wallet !== "empty" && create.selectedCoin === '') {
+    setCreate({ ...create, selectedCoin: wallet[0].coinID })
+  }
+
+  const addCreateCoin = () => {
+    let toSet = parseInt(create.selectedCoin);
+    let copyArray = create.coins;
+    if (copyArray.includes(toSet)) {
+      alert("You already have selected that Coin for donation.")
+      return;
+    }
+    copyArray.push(toSet);
+    copyArray.sort((a, b) => (a - b));
+    setCreate({ ...create, coins: copyArray })
+  }
+
+  const delCreateCoin = (target) => {
+    console.log(target)
+    target = parseInt(target);
+    let newArray = [];
+    create.coins.forEach((e) => {
+      if (e !== target) {
+        newArray.push(e);
+      }
+    })
+    newArray.sort((a, b) => (a - b));
+    setCreate({ ...create, coins: newArray })
+  }
+
   const addCreateSender = () => {
     let toSet = create.senderConditions;
     let copyArray = create.senderList;
     if (toSet === '' || copyArray.includes(toSet)) {
-      setCreate({...create, senderConditions: ''})
+      setCreate({ ...create, senderConditions: '' })
       return;
     }
     copyArray.push(toSet);
@@ -30,21 +59,20 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
   }
 
   const delCreateSender = (target) => {
-    console.log(target)
     let newArray = [];
     create.senderList.forEach((e) => {
-      if(e !== target){
+      if (e !== target) {
         newArray.push(e);
       }
     })
-    setCreate({...create, senderList: newArray})
+    setCreate({ ...create, senderList: newArray })
   }
 
   const addCreateReceiver = () => {
     let toSet = create.receiverConditions;
     let copyArray = create.receiverList;
     if (toSet === '' || copyArray.includes(toSet)) {
-      setCreate({...create, receiverConditions: ''})
+      setCreate({ ...create, receiverConditions: '' })
       return;
     }
     copyArray.push(toSet);
@@ -52,40 +80,56 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
   }
 
   const delCreateReceiver = (target) => {
-    console.log(target)
     let newArray = [];
     create.receiverList.forEach((e) => {
-      if(e !== target){
+      if (e !== target) {
         newArray.push(e);
       }
     })
-    setCreate({...create, receiverList: newArray})
+    setCreate({ ...create, receiverList: newArray })
   }
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    await onCreate(create.senderList, create.receiverList, create.coins);
+    if (create.coins.length === 0) {
+      alert("Select Coins to use");
+      return;
+    }
+    const result = await onCreate(create.senderList, create.receiverList, create.coins);
+    setCreate({ ...create, result: result });
   }
 
   if (create.result !== null) {
     createBox = (
       <div className="alert alert-success mt-3" role="alert">
-        Conditions are fullfilled.
+        Donation set up successfully.
       </div>
     )
   }
 
   let tablebody = offers.map((off) => (
-    <Offer key={"o" + off.offerID} offer={off} onApply={onApply} />
+    <Offer key={"o_" + off.offerID} offer={off} onApply={onApply} />
   ))
 
   let existingSender = create.senderList.map((cond) => (
-    <Condition key={"es_" + cond} cond={cond} handler={delCreateSender}/>
+    <Condition key={"es_" + cond} cond={cond} handler={delCreateSender} />
   ))
 
   let existingReceiver = create.receiverList.map((cond) => (
-    <Condition key={"es_" + cond} cond={cond} handler={delCreateReceiver}/>
+    <Condition key={"er_" + cond} cond={cond} handler={delCreateReceiver} />
   ))
+
+  let existingCoins = create.coins.map((coin) => (
+    <SponsorCoin key={"sc_" + coin} coin={coin} handler={delCreateCoin} />
+  ))
+
+  let coinOptions
+
+  if (wallet !== 'empty') {
+    coinOptions = wallet.map((coin) => (
+      <option key={"c_" + coin.coinID} value={coin.coinID}>{coin.coinID}</option>
+    ))
+  }
 
   let tablehead = (
     <div className="ml-5 mr-5 mt-4">
@@ -121,16 +165,19 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
               <div className="form-group">
                 <label htmlFor="inputCreateCoins">Coins</label>
                 <div className="input-group">
-                  <input className="form-control" id="inputCreateCoins" aria-describedby="CreateCoinsHelp" placeholder="Enter Sender Condition"
-                    value={create.coins} onChange={(e) => setCreate({ ...create, coins: e.target.value })} ></input>
+                  <select className="form-control" id="inputCreateCoins" value={create.selectedCoin} onChange={(e) => setCreate({ ...create, selectedCoin: e.target.value })}>
+                    {coinOptions}
+                  </select>
+                  <GoPlus size={'2em'} color={'green'} onClick={addCreateCoin} cursor={'pointer'} />
                 </div>
               </div>
+              {existingCoins}
               <div className="form-group">
                 <label htmlFor="inputCreateSender">Sender Conditions</label>
                 <div className="input-group">
                   <input className="form-control" id="inputCreateSender" aria-describedby="CreateSenderHelp" placeholder="Enter Sender Condition"
                     value={create.senderConditions} onChange={(e) => setCreate({ ...create, senderConditions: e.target.value })} ></input>
-                  <GoPlus size={'2em'} color={'green'} onClick={addCreateSender} cursor={'pointer'}/>
+                  <GoPlus size={'2em'} color={'green'} onClick={addCreateSender} cursor={'pointer'} />
                 </div>
               </div>
               {existingSender}
@@ -140,7 +187,7 @@ const Sponsor = ({ offers, onCreate, onApply }) => {
                   <input className="form-control mr-2" id="inputCreateReceiver" aria-describedby="CreateReceiverHelp" placeholder="Enter Receiver Condition"
                     value={create.receiverConditions} onChange={(e) => setCreate({ ...create, receiverConditions: e.target.value })} >
                   </input>
-                  <GoPlus size={'2em'} color={'green'} onClick={addCreateReceiver} cursor={'pointer'}/>
+                  <GoPlus size={'2em'} color={'green'} onClick={addCreateReceiver} cursor={'pointer'} />
                 </div>
               </div>
               {existingReceiver}

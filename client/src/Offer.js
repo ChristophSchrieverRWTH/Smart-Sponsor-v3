@@ -11,14 +11,14 @@ const Offer = ({ offer, onApply }) => {
   }
 
   if (offer.senderConditions.length === 0) {
-    sender = <p>None</p>
+    sender = <p><em>None</em></p>
   } else {
     sender = offer.senderConditions.map((cond) => (
       <p key={"os" + cond.offerID + cond}>{cond}</p>
     ))
   }
   if (offer.receiverConditions.length === 0) {
-    receiver = <p>None</p>
+    receiver = <p><em>None</em></p>
   } else {
     receiver = offer.receiverConditions.map((cond) => (
       <p key={"or" + cond.offerID + cond}>{cond}</p>

@@ -1,6 +1,6 @@
-import { ImCross } from 'react-icons/im'
+import { ImCross } from 'react-icons/im';
 
-function Condition({ cond, handler}) {
+const Condition = ({ cond, handler}) => {
 
     const handleFunction = (e) => {
         e.preventDefault();
