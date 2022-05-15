@@ -120,6 +120,7 @@ class App extends Component {
     try {
       await this.state.bankC.methods.permit(address, IDs).send({from: this.state.account})
       await this.updateCoins();
+      return true;
     } catch(error) {
       console.log(error);
       alert("Something went wrong (permit)")
@@ -144,9 +145,13 @@ class App extends Component {
     }
   }
 
-  attach = async (IDs, address) => {
+  attach = async (IDs, address, senderConditions, receiverConditions) => {
     try {
-      await this.state.bankC.methods.attachTransfer(address, IDs, [], []).send({from: this.state.account})
+      if(IDs.length === 0){
+        alert("Specify Coins to Transfer")
+        return;
+      }
+      await this.state.bankC.methods.attachTransfer(address, IDs, senderConditions, receiverConditions).send({from: this.state.account})
       await this.updateCoins();
     } catch(error) {
       console.log(error);

@@ -1,9 +1,11 @@
 import Coin from "./Coin.js"
+import MultiSelect from "./MultiSelect.js"
 import { useState } from "react"
 import "./Bank.css"
 
 const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
   const [mint, setMint] = useState({ address: '', amount: "", senderConditions: "", receiverConditions: "", result: null })
+  const [check, setCheck] = useState({ selected: [] })
   let tablehead;
   let tablebody;
 
@@ -11,6 +13,28 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
     e.preventDefault();
     const response = await onMint(mint.address, mint.amount, mint.senderConditions, mint.receiverConditions);
     setMint({ address: '', amount: "", senderConditions: "", receiverConditions: "", result: response })
+  }
+
+  const handleCheck = (target) => {
+    let copyArray = check.selected;
+    if (!copyArray.includes(target)) {
+      copyArray.push(target);
+      copyArray.sort((a, b) => (a - b));
+      setCheck({ selected: copyArray });
+    } else {
+      let newArray = [];
+      copyArray.forEach((checked) => {
+        if (checked !== target) {
+          newArray.push(checked);
+        }
+      })
+      newArray.sort((a, b) => (a - b));
+      setCheck({ selected: newArray });
+    }
+  }
+
+  const clearChecked = () => {
+    setCheck({ selected: [] })
   }
 
   if (isOwnerB) {
@@ -65,9 +89,13 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
     )
   }
 
-  tablebody = wallet.map((curr) => (
-    <Coin key={"c" + curr.coinID} coin={curr} onPermit={onPermit} onNormal={onNormal} onAttach={onAttach} />
-  ))
+  tablebody = wallet.map((curr) => {
+    if (check.selected.includes(curr.coinID)) {
+      return <Coin key={"c" + curr.coinID} coin={curr} onPermit={onPermit} onNormal={onNormal} onAttach={onAttach} onCheck={handleCheck} isChecked={true} />
+    } else {
+      return <Coin key={"c" + curr.coinID} coin={curr} onPermit={onPermit} onNormal={onNormal} onAttach={onAttach} onCheck={handleCheck} isChecked={false} />
+    }
+  })
 
   tablehead = (
     <div className="ml-5 mr-5 mt-4">
@@ -79,7 +107,8 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
               <th scope="col">Sender Conditions</th>
               <th scope="col">Receiver Conditions</th>
               <th scrope="col">Transasctions</th>
-              <th scope="col">Permitted Address</th>
+              <th scope="col" className="text-center">Permitted Address</th>
+              <th scope="col" className="text-center">Select for Multiselect </th>
             </tr>
           </thead>
           <tbody>
@@ -91,7 +120,8 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
   )
 
   return (
-    <div>
+    <div className="pt-4">
+      <MultiSelect onPermit={onPermit} onNormal={onNormal} onAttach={onAttach} checked={check.selected} clearChecked={clearChecked} />
       {tablehead}
     </div>
   )
