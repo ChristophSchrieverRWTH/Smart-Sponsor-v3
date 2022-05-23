@@ -139,38 +139,37 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
                         </button>
                     </div>
                     <div className="modal-body text-center">
-                        <form onSubmit={handleAttach}>
-                            <div className="form-group">
-                                <label htmlFor="inputAttachAddress">Receiver Address</label>
-                                <div className="input-group">
-                                    <input className="form-control" id="AttachAddress" aria-describedby="AttachAddressHelp" placeholder="Enter Sender Address"
-                                        value={attach.address} onChange={(e) => setAttach({ ...attach, address: e.target.value })} ></input>
-                                </div>
+                        <div className="form-group">
+                            <label htmlFor="inputAttachAddress">Receiver Address</label>
+                            <div className="input-group">
+                                <input className="form-control" id="AttachAddress" aria-describedby="AttachAddressHelp" placeholder="Enter Sender Address"
+                                    value={attach.address} onChange={(e) => setAttach({ ...attach, address: e.target.value })} ></input>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="inputAttachSender">Sender Conditions</label>
-                                <div className="input-group">
-                                    <input className="form-control" id="inputAttachSender" aria-describedby="AttachSenderHelp" placeholder="Enter Sender Condition"
-                                        value={attach.senderConditions} onChange={(e) => setAttach({ ...attach, senderConditions: e.target.value })} ></input>
-                                    <GoPlus size={'2em'} color={'green'} onClick={addAttachSender} cursor={'pointer'} />
-                                </div>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="inputAttachSender">Sender Conditions</label>
+                            <div className="input-group">
+                                <input className="form-control" id="inputAttachSender" aria-describedby="AttachSenderHelp" placeholder="Enter Sender Condition"
+                                    value={attach.senderConditions} onChange={(e) => setAttach({ ...attach, senderConditions: e.target.value })} ></input>
+                                <GoPlus size={'2em'} color={'green'} onClick={addAttachSender} cursor={'pointer'} />
                             </div>
-                            {existingSender}
-                            <div className="form-group">
-                                <label htmlFor="inputAttachReceiver">Receiver Conditions</label>
-                                <div className="input-group">
-                                    <input className="form-control mr-2" id="inputAttachReceiver" aria-describedby="AttachReceiverHelp" placeholder="Enter Receiver Condition"
-                                        value={attach.receiverConditions} onChange={(e) => setAttach({ ...attach, receiverConditions: e.target.value })} >
-                                    </input>
-                                    <GoPlus size={'2em'} color={'green'} onClick={addAttachReceiver} cursor={'pointer'} />
-                                </div>
+                        </div>
+                        {existingSender}
+                        <div className="form-group">
+                            <label htmlFor="inputAttachReceiver">Receiver Conditions</label>
+                            <div className="input-group">
+                                <input className="form-control mr-2" id="inputAttachReceiver" aria-describedby="AttachReceiverHelp" placeholder="Enter Receiver Condition"
+                                    value={attach.receiverConditions} onChange={(e) => setAttach({ ...attach, receiverConditions: e.target.value })} >
+                                </input>
+                                <GoPlus size={'2em'} color={'green'} onClick={addAttachReceiver} cursor={'pointer'} />
                             </div>
-                            {existingReceiver}
-                            <button type="submit" className="btn btn-primary">Submit</button>
-                        </form>
+                        </div>
+                        {existingReceiver}
+
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={handleAttach}>Submit</button>
                     </div>
                 </div>
             </div>
