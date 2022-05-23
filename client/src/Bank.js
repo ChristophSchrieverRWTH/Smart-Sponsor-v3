@@ -1,18 +1,70 @@
 import Coin from "./Coin.js"
-import MultiSelect from "./MultiSelect.js"
-import { useState } from "react"
 import "./Bank.css"
+import MultiSelect from "./MultiSelect.js"
+import Condition from "./Condition.js"
+import { useState } from "react"
+import { GoPlus } from 'react-icons/go'
 
 const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
-  const [mint, setMint] = useState({ address: '', amount: "", senderConditions: "", receiverConditions: "", result: null })
+  const [mint, setMint] = useState({ address: '', amount: "", senderConditions: "", receiverConditions: "", senderList: [], receiverList: [], result: null })
   const [check, setCheck] = useState({ selected: [] })
   let tablehead;
   let tablebody;
 
+  const addMintSender = () => {
+    let toSet = mint.senderConditions;
+    let copyArray = mint.senderList;
+    if (toSet === '' || copyArray.includes(toSet)) {
+      setMint({ ...mint, senderConditions: '' })
+      return;
+    }
+    copyArray.push(toSet);
+    setMint({ ...mint, senderList: copyArray, senderConditions: '' })
+  }
+
+  const delMintSender = (target) => {
+    let newArray = [];
+    mint.senderList.forEach((e) => {
+      if (e !== target) {
+        newArray.push(e);
+      }
+    })
+    setMint({ ...mint, senderList: newArray })
+  }
+
+  const addMintReceiver = () => {
+    let toSet = mint.receiverConditions;
+    let copyArray = mint.receiverList;
+    if (toSet === '' || copyArray.includes(toSet)) {
+      setMint({ ...mint, receiverConditions: '' })
+      return;
+    }
+    copyArray.push(toSet);
+    setMint({ ...mint, receiverList: copyArray, receiverConditions: '' })
+  }
+
+  const delMintReceiver = (target) => {
+    let newArray = [];
+    mint.receiverList.forEach((e) => {
+      if (e !== target) {
+        newArray.push(e);
+      }
+    })
+    setMint({ ...mint, receiverList: newArray })
+  }
+
+  let existingSender = mint.senderList.map((cond) => (
+    <Condition key={"modal_es_" + cond} cond={cond} handler={delMintSender} />
+  ))
+
+  let existingReceiver = mint.receiverList.map((cond) => (
+    <Condition key={"modal_er_" + cond} cond={cond} handler={delMintReceiver} />
+  ))
+
   const handleMint = async (e) => {
     e.preventDefault();
-    const response = await onMint(mint.address, mint.amount, mint.senderConditions, mint.receiverConditions);
-    setMint({ address: '', amount: "", senderConditions: "", receiverConditions: "", result: response })
+    const response = await onMint(mint.address, mint.amount, mint.senderList, mint.receiverList);
+    setMint({ address: '', amount: "", senderConditions: "", receiverConditions: "", senderList: [], receiverList: [], result: response })
   }
 
   const handleCheck = (target) => {
@@ -62,15 +114,19 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
                 <div className="input-group">
                   <input className="form-control" id="inputMintSender" aria-describedby="MintSenderHelp" placeholder="Enter Sender Condition"
                     value={mint.senderConditions} onChange={(e) => setMint({ ...mint, senderConditions: e.target.value })} ></input>
+                  <GoPlus size={'2em'} color={'green'} onClick={addMintSender} cursor={'pointer'} />
                 </div>
               </div>
+              {existingSender}
               <div className="form-group">
                 <label htmlFor="inputMintReceiver">Receiver Conditions</label>
                 <div className="input-group">
                   <input className="form-control" id="inputMintReceiver" aria-describedby="MintReceiverHelp" placeholder="Enter Receiver Condition"
                     value={mint.receiverConditions} onChange={(e) => setMint({ ...mint, receiverConditions: e.target.value })} ></input>
+                  <GoPlus size={'2em'} color={'green'} onClick={addMintReceiver} cursor={'pointer'} />
                 </div>
               </div>
+              {existingReceiver}
               <button type="submit" className="btn btn-primary">Submit</button>
             </form>
           </div>

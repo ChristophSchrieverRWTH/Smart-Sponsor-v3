@@ -191,14 +191,6 @@ class App extends Component {
 
   mint = async (address, amount, senderConditions, receiverConditions) => {
     try {
-      senderConditions = senderConditions.split(', ');
-      receiverConditions = receiverConditions.split(', ');
-      if(senderConditions.length === 1 && senderConditions[0] === ""){
-        senderConditions = [];
-      }
-      if(receiverConditions.length === 1 && receiverConditions[0] === ""){
-        receiverConditions = [];
-      }
       await this.state.bankC.methods.mint(address, amount, senderConditions, receiverConditions).send({from: this.state.account});
       return true;
     } catch(error) {
