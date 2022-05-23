@@ -22,10 +22,12 @@ contract Sponsor is Ownable {
     Offer[] private empty;
 
     function setVerifier(address _verifier) public onlyOwner() {
+        require(_verifier != address(0), "Cannot set Verifier to this address");
         verifier = VerifySponsor(_verifier);
     }
 
     function setBank(address _bank) public onlyOwner() {
+        require(_bank != address(0), "Cannot set Bank to this address");
         bank = BankSponsor(_bank);
     }
 

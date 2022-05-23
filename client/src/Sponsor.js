@@ -7,13 +7,40 @@ import { GoPlus } from 'react-icons/go'
 const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
   const [create, setCreate] = useState({ selectedCoin: '', senderConditions: "", receiverConditions: "", result: null, coins: [], senderList: [], receiverList: [] })
   let createBox;
+  let table;
 
   if (offers === 'empty') { // TO-DO
-    return (
-      <div className="page-hero d-flex align-items-center justify-content-center makemid">
+    
+    table= (<div className="page-hero d-flex align-items-center justify-content-center mt-5">
         <h1>
           <em>There are currently no offers.</em>
         </h1>
+      </div>
+    )
+  } else {
+    let tablebody = offers.map((off) => (
+      <Offer key={"o_" + off.offerID} offer={off} onApply={onApply} />
+    ))
+
+    table = (
+      <div className="ml-5 mr-5 mt-4">
+        <div className="m-3">
+          <table className="table ">
+            <thead>
+              <tr>
+                <th scope="col">Offer ID</th>
+                <th scrope="col">Donated Coins</th>
+                <th scope="col">Sender Conditions</th>
+                <th scope="col">Receiver Conditions</th>
+                <th scope="col">Donor</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {tablebody}
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   }
@@ -107,10 +134,6 @@ const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
     )
   }
 
-  let tablebody = offers.map((off) => (
-    <Offer key={"o_" + off.offerID} offer={off} onApply={onApply} />
-  ))
-
   let existingSender = create.senderList.map((cond) => (
     <Condition key={"es_" + cond} cond={cond} handler={delCreateSender} />
   ))
@@ -131,31 +154,9 @@ const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
     ))
   }
 
-  let tablehead = (
-    <div className="ml-5 mr-5 mt-4">
-      <div className="m-3">
-        <table className="table ">
-          <thead>
-            <tr>
-              <th scope="col">Offer ID</th>
-              <th scrope="col">Donated Coins</th>
-              <th scope="col">Sender Conditions</th>
-              <th scope="col">Receiver Conditions</th>
-              <th scope="col">Donor</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {tablebody}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-
   return (
     <div>
-      {tablehead}
+      {table}
       <div className="text-center m-5 row">
         <div className="col-4"></div>
         <div className="card col-4">

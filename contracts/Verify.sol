@@ -9,10 +9,6 @@ contract Verify is Ownable {
     bytes32[] public certificateArray; 
     uint256 private certificateLength = 30; // this is in seconds
 
-    event verifyEvent(
-        bytes32 indexed hash
-    );
-
     function addCertificate(address _user, string memory _condition) public onlyOwner returns (bytes32) {
         // Confirm condition string is not empty string
         require(keccak256(abi.encodePacked(_condition)) != keccak256(abi.encodePacked('')), "Cannot verify empty conditions");
@@ -26,7 +22,6 @@ contract Verify is Ownable {
             certificates[newCertificate] = true;
             certificateArray.push(newCertificate);
         }
-        emit verifyEvent(newCertificate);
         return newCertificate;
     }
 

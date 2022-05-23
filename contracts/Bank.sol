@@ -18,20 +18,6 @@ contract Bank is Ownable {
     address[] public allowed;
     VerifyBank private verifier;
     string[] private empty;
-    
-
-    event coinMinted(
-        uint256 _coinID,
-        address _owner
-    );
-
-    event coinTransfer(
-        uint256 _coinID
-    );
-
-    event coinPermitted(
-        uint256 _coinID
-    );
 
     function setVerifier(address _verifier) public onlyOwner() {
         require(_verifier != address(0), "Cannot set Verifier to this address");
@@ -51,7 +37,6 @@ contract Bank is Ownable {
             coins.push(Coin(coinID, address(0), _senderConditions, _receiverConditions));
             owners.push(_owner);
             allowed.push(address(0));
-            emit coinMinted(coinID, _owner);
             coinID++;
         }
     }
@@ -64,7 +49,7 @@ contract Bank is Ownable {
         for(uint256 i = 0; i < _payment.length; i++){
             uint256 currID = _payment[i];
             // Confirm permission to use this coin
-            require(owners[currID] == msg.sender || allowed[currID] == msg.sender, "You do not have permission over all these coins"); // TO-DO Modify to allow permission
+            require(owners[currID] == msg.sender || allowed[currID] == msg.sender, "You do not have permission over all these coins");
             // Confirm Receiver is not current Owner
             require(owners[currID] != _receiver, "You cannot send coins to yourself");
             Coin memory currCoin = coins[currID];
@@ -80,7 +65,6 @@ contract Bank is Ownable {
             coins[currID].permit = address(0);
             owners[currID] = _receiver;
             allowed[currID] = address(0);
-            emit coinTransfer(currID);
         }
     }
 
@@ -97,7 +81,7 @@ contract Bank is Ownable {
         for(uint256 i = 0; i < _payment.length; i++){
             uint256 currID = _payment[i];
             // Confirm permission to use this coin
-            require(owners[currID] == msg.sender || allowed[currID] == msg.sender, "You do not have permission over all these coins"); // TO-DO Modify to allow permission
+            require(owners[currID] == msg.sender || allowed[currID] == msg.sender, "You do not have permission over all these coins");
             // Confirm Receiver is not current Owner
             require(owners[currID] != _receiver, "You cannot send coins to yourself");
             Coin memory currCoin = coins[currID];
@@ -113,7 +97,6 @@ contract Bank is Ownable {
             coins[currID].permit = address(0);
             owners[currID] = _receiver;
             allowed[currID] = address(0);
-            emit coinTransfer(currID);
         }
     }
 
@@ -127,7 +110,6 @@ contract Bank is Ownable {
             require(owners[currID] == msg.sender, "You are not the owner of all specified coins");
             coins[currID].permit = _target;
             allowed[currID] = _target;
-            emit coinPermitted(currID);
         }
     }
 
