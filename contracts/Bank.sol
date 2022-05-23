@@ -34,8 +34,12 @@ contract Bank is Ownable {
     );
 
     function setVerifier(address _verifier) public onlyOwner() {
+        require(_verifier != address(0), "Cannot set Verifier to this address");
         verifier = VerifyBank(_verifier);
     }
+
+    // WARNING: In Theory it is possible to set singular strings to the empty string. Checking this in the backend is too 
+    // resource intensive, so the front end will assure sanity for conditions.
 
     function mint(address _owner, uint256 _amount, string[] memory _senderConditions, string[] memory _receiverConditions) public onlyOwner() {
         // Confirm user is actual account
@@ -80,12 +84,16 @@ contract Bank is Ownable {
         }
     }
 
-    function attachTransfer(address _receiver, uint256[] memory _payment, string[] memory senderConditions, string[] memory receiverConditions) public {
+    // WARNING: In Theory it is possible to set singular strings to the empty string. Checking this in the backend is too 
+    // resource intensive, so the front end will assure sanity for conditions.
+
+    function attachTransfer(address _receiver, uint256[] memory _payment, string[] memory _senderConditions, string[] memory _receiverConditions) public {
         // Confirm target address exists
         require(_receiver != address(0), "Cannot send coins to this address");
         // Confirm Coins to send are specified
         require(_payment.length != 0, "Specify an amount to send");
-        // No need to dissallow sending empty condition sets
+        // At least one of the condition sets should contain strings.
+        require(_senderConditions.length > 0 || _receiverConditions.length > 0, "At least one of the condition sets should contain conditions");
         for(uint256 i = 0; i < _payment.length; i++){
             uint256 currID = _payment[i];
             // Confirm permission to use this coin
@@ -100,8 +108,8 @@ contract Bank is Ownable {
             for(uint256 j = 0; j < currCoin.receiverConditions.length; j++){
                 require(verifier.checkCertificate(_receiver, currCoin.receiverConditions[j]), "Not all receiver-conditions fulfilled");
             }
-            coins[currID].senderConditions = senderConditions;
-            coins[currID].receiverConditions = receiverConditions;
+            coins[currID].senderConditions = _senderConditions;
+            coins[currID].receiverConditions = _receiverConditions;
             coins[currID].permit = address(0);
             owners[currID] = _receiver;
             allowed[currID] = address(0);

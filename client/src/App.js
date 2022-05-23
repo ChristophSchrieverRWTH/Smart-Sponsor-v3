@@ -162,7 +162,7 @@ class App extends Component {
         alert("Did not verify Transaction.");
         return;
       }
-      alert("Something went wrong (Normal Transfer).");
+      alert("Something went wrong (Attach Transfer).");
       return;
     }
   }

@@ -32,7 +32,10 @@ contract Verify is Ownable {
 
     function checkCertificate(address _user, string memory _condition) public view returns (bool) {
         // Calculate hash to look up
-        // As nothing is written to the blockchain we allow passing zero arguments
+        // Confirm condition string is not empty string
+        require(keccak256(abi.encodePacked(_condition)) != keccak256(abi.encodePacked('')), "Cannot verify empty conditions");
+        // Confirm user is actual account
+        require(_user != address(0), "Cannot verify for no User");
         bytes32 containedCertificate = calculateHash(_user, _condition);
         return certificates[containedCertificate];
     }

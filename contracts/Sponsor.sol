@@ -29,6 +29,10 @@ contract Sponsor is Ownable {
         bank = BankSponsor(_bank);
     }
 
+    // WARNING: In Theory it is possible to set singular strings to the empty string. Checking this in the backend is too 
+    // resource intensive, so the front end will assure sanity for conditions.
+    // It is completely possible to set no conditions
+
     function createOffer(string[] memory _senderConditions, string[] memory _receiverConditions, uint256[] memory _coinIDs) public {
         // Confirm amount is specified
         require(_coinIDs.length != 0, "Need to require donation amount");
@@ -50,7 +54,11 @@ contract Sponsor is Ownable {
             string memory currCondition = applied.senderConditions[i];
             require(verifier.checkCertificate(msg.sender, currCondition), "You do not fullfill all conditions");
         }
-        bank.attachTransfer(msg.sender, applied.coinIDs, applied.senderConditions, applied.receiverConditions);
+        if(applied.senderConditions.length > 0 || applied.receiverConditions.length > 0){
+            bank.attachTransfer(msg.sender, applied.coinIDs, applied.senderConditions, applied.receiverConditions);
+        } else {
+            bank.normalTransfer(msg.sender, applied.coinIDs);
+        }
         activeOffers[_offerID] = false;
         activeNumber--;
     }
