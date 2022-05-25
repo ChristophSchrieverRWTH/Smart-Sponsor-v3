@@ -5,8 +5,8 @@ import { GoPlus } from 'react-icons/go'
 const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) => {
 
     const [permit, setPermit] = useState({ address: '', result: null })
-    const [normal, setNormal] = useState({ address: '', result: null })
-    const [attach, setAttach] = useState({ address: '', senderConditions: "", receiverConditions: "", senderList: [], receiverList: [], result: null })
+    const [normal, setNormal] = useState({ address: ''})
+    const [attach, setAttach] = useState({ address: '', senderConditions: "", receiverConditions: "", senderList: [], receiverList: []})
     let existingSender;
     let existingReceiver;
 
@@ -20,12 +20,14 @@ const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) =>
     const handleNormal = async (e) => {
         e.preventDefault();
         await onNormal(checked, normal.address);
+        setNormal({ address: ''})
         clearChecked();
     }
 
     const handleAttach = async (e) => {
         e.preventDefault();
         await onAttach(checked, attach.address, attach.senderList, attach.receiverList);
+        setAttach({address: '', senderConditions: '', receiverConditions: '', senderList: [], receiverList: []})
         clearChecked();
     }
 

@@ -21,6 +21,7 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
         setPermit({ address: '', result: response })
     }
 
+    // As handleattach/normal transfer the coin, there is no need to empty the state as is with permit.
     const handleNormal = async (e) => {
         e.preventDefault();
         await onNormal([coin.coinID], normal.address);

@@ -5,17 +5,17 @@ import { useState } from "react"
 import { GoPlus } from 'react-icons/go'
 
 const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
-  const [create, setCreate] = useState({ selectedCoin: '', senderConditions: "", receiverConditions: "", result: null, coins: [], senderList: [], receiverList: [] })
+  const [create, setCreate] = useState({ selectedCoin: '', senderConditions: "", receiverConditions: "", result: null, coins: [], senderList: [], receiverList: [] });
   let createBox;
   let table;
 
   if (offers === 'empty') { // TO-DO
-    
-    table= (<div className="page-hero d-flex align-items-center justify-content-center mt-5">
-        <h1>
-          <em>There are currently no offers.</em>
-        </h1>
-      </div>
+
+    table = (<div className="page-hero d-flex align-items-center justify-content-center mt-5">
+      <h1>
+        <em>There are currently no offers.</em>
+      </h1>
+    </div>
     )
   } else {
     let tablebody = offers.map((off) => (
@@ -123,15 +123,23 @@ const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
       return;
     }
     const result = await onCreate(create.senderList, create.receiverList, create.coins);
-    setCreate({ ...create, result: result });
+    setCreate({result: result, selectedCoin: '', senderConditions: "", receiverConditions: "", coins: [], senderList: [], receiverList: [] });
   }
 
   if (create.result !== null) {
-    createBox = (
-      <div className="alert alert-success mt-3" role="alert">
-        Donation set up successfully.
-      </div>
-    )
+    if (create.result !== false) {
+      createBox = (
+        <div className="alert alert-success mt-3" role="alert">
+          Donation set up successfully.
+        </div>
+      )
+    } else {
+      createBox = (
+        <div className="alert alert-danger mt-3" role="alert">
+          The offer has not been set up. You are still in posession of your coins.
+        </div>
+      )
+    }
   }
 
   let existingSender = create.senderList.map((cond) => (

@@ -10,6 +10,23 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
   const [check, setCheck] = useState({ selected: [] })
   let tablehead;
   let tablebody;
+  let mintBox;
+
+  if(mint.result !== null){
+    if(mint.result){
+      mintBox = (
+        <div className="alert alert-success mt-3" role="alert">
+          New coins successfully minted.
+        </div>
+      )
+    } else {
+      mintBox = (
+        <div className="alert alert-danger mt-3" role="alert">
+          No new coins have been minted.
+        </div>
+      )
+    }
+  }
 
   const addMintSender = () => {
     let toSet = mint.senderConditions;
@@ -105,7 +122,7 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
               <div className="form-group">
                 <div className="form-outline">
                   <label className="form-label" htmlFor="typeNumber">Amount to Mint</label>
-                  <input type="number" id="typeNumber" className="form-control" placeholder="Determine Amount of Coins to Mint"
+                  <input type="number" id="typeNumber" className="form-control" placeholder="Determine Amount of Coins to Mint" min = "1"
                     value={mint.amount} onChange={(e) => setMint({ ...mint, amount: e.target.value })} />
                 </div>
               </div>
@@ -130,6 +147,7 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
               <button type="submit" className="btn btn-primary">Submit</button>
             </form>
           </div>
+          {mintBox}
         </div>
       </div>
     )

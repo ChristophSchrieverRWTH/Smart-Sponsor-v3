@@ -46,10 +46,18 @@ const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
 
 
   if (add.result !== '') {
-    addBox = (
-      <div className="alert alert-success mt-3" role="alert">
-        New Certificate {add.result} successfully added.
-      </div>)
+    if (add.result === false) {
+      addBox = (
+        <div className="alert alert-danger mt-3" role="alert">
+          No Certificate has been added.
+        </div>
+      )
+    } else {
+      addBox = (
+        <div className="alert alert-success mt-3" role="alert">
+          New Certificate {add.result} successfully added.
+        </div>)
+    }
   }
 
   if (check.result !== null) {

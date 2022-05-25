@@ -65,10 +65,10 @@ class App extends Component {
     } catch (error) {
       if (error.code === 'INVALID_ARGUMENT') {
         alert("Check your Inputs.");
-        return '';
+        return false;
       } else if (error.code === 4001) {
         alert("Did not verify Transaction.");
-        return '';
+        return false;
       }
       alert("Something went wrong (Check Certificate).");
       return '';
@@ -195,7 +195,8 @@ class App extends Component {
       return true;
     } catch(error) {
       console.log(error);
-      alert("Something went wrong (mint)")
+      alert("Something went wrong (mint)");
+      return false;
     }
   }
 
@@ -204,9 +205,10 @@ class App extends Component {
       await this.state.sponsorC.methods.applyOffer(offerID).send({from: this.state.account});
       await this.updateOffers();
       await this.updateCoins();
+      alert("Congratulations on successfully applying for this offer. Check your bank account to see your new currency.")
     } catch(error) {
       console.log(error);
-      alert("You don't fullfil all conditions.")
+      alert("You don't fullfil all conditions.");
     }
   }
 
@@ -218,7 +220,8 @@ class App extends Component {
       return response;
     } catch(error) {
       console.log(error);
-      alert("Something went wrong (createOffer)")
+      alert("Something went wrong (createOffer)");
+      return false;
     }
   }
 
