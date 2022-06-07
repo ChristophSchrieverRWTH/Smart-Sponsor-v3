@@ -16,7 +16,7 @@ contract Bank is Ownable {
     Coin[] public coins;
     address[] public owners;
     address[] public allowed;
-    VerifyBank private verifier;
+    VerifyBank public verifier;
     string[] private empty;
 
     function setVerifier(address _verifier) public onlyOwner() {
