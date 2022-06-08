@@ -7,6 +7,7 @@ import NavComp from "./Navcomp";
 import Bank from "./Bank";
 import Verify from "./Verify";
 import Sponsor from "./Sponsor";
+import Tutorial from "./Tutorial";
 
 class App extends Component {
   state = { web3: null, account: null, verifyC: null, isOwnerV: null, bankC: null, isOwnerB: null, sponsorC: null, website: 'bank', coins: 'default', offers: 'default' };
@@ -236,6 +237,8 @@ class App extends Component {
       activeWebsite = <Sponsor offers={this.state.offers} wallet={this.state.coins} onCreate={this.createOffer} onApply={this.applyOffer}/>;
     } else if (this.state.website === 'verify') {
       activeWebsite = <Verify onAdd={this.addCertificate} onCheck={this.checkCertificate} onTime={this.updateTime} isOwnerV={this.state.isOwnerV} />;
+    } else if (this.state.website === 'tutorial') {
+      activeWebsite = <Tutorial/>
     }
     return (
       <div className="m-3">

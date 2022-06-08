@@ -13,6 +13,9 @@ const NavComp = ({ active, onClick, user }) => {
               <li className="nav-item">
                 <a href="#/" className="nav-link" onClick={() => onClick('sponsor')}>Smart Sponsor</a>
               </li>
+              <li>
+                <a href="#/" className="nav-link" onClick={() => onClick('tutorial')}>Tutorial</a>
+              </li>
             </ul>
         </nav>
         <h3 className="text-center mt-4">Logged in as: {user}</h3>
