@@ -27,11 +27,11 @@ const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
   const handleCheck = async (e) => {
     e.preventDefault();
     if (!check.address) {
-      alert("Please enter an Address");
+      alert("Please enter an address");
       return;
     }
     if (!check.condition) {
-      alert("Please enter Conditions");
+      alert("Please enter conditions");
       return;
     }
     const response = await onCheck(check.address, check.condition);

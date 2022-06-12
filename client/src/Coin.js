@@ -17,17 +17,33 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
 
     const handlePermit = async (e) => {
         e.preventDefault();
+        if(!permit.address){
+            alert("Please enter an address")
+            return;
+        }
         const response = await onPermit([coin.coinID], permit.address);
         setPermit({ address: '', result: response })
     }
 
     // As handleattach/normal transfer the coin, there is no need to empty the state as is with permit.
     const handleNormal = async (e) => {
+        if(!normal.address){
+            alert("Please enter an address");
+            return;
+        }
         e.preventDefault();
         await onNormal([coin.coinID], normal.address);
     }
 
     const handleAttach = async (e) => {
+        if(!attach.address){
+            alert("Please enter an address");
+            return;
+        }
+        if(attach.senderList.length === 0 && attach.receiverList.length === 0){
+            alert("Please enter at least one condition or use the normal transfer");
+            return;
+        }
         e.preventDefault();
         await onAttach([coin.coinID], attach.address, attach.senderList, attach.receiverList);
     }

@@ -65,14 +65,20 @@ class App extends Component {
       return response;
     } catch (error) {
       if (error.code === 'INVALID_ARGUMENT') {
-        alert("Check your Inputs.");
+        alert("The selected address does not exist");
         return false;
       } else if (error.code === 4001) {
-        alert("Did not verify Transaction.");
+        alert("Did not verify Transaction");
         return false;
+      } else if (error.code === -32603) {
+        let result = extractError(error.message);
+        alert(result);
+        return false;
+      } else {
+        alert("AddCertificate: Something unexpected happened");
+        console.error(error);
+        return '';
       }
-      alert("Something went wrong (Check Certificate).");
-      return '';
     }
   }
 
@@ -81,7 +87,12 @@ class App extends Component {
       const response = await this.state.verifyC.methods.checkCertificate(address, condition).call();
       return response;
     } catch (error) {
-      alert("Check your Inputs");
+      if(error.code==='INVALID_ARGUMENT'){
+        alert("The selected address does not exist");
+      } else {
+        let result = extractError(error);
+        alert(result)
+      }
       return null;
     }
   }
@@ -91,8 +102,13 @@ class App extends Component {
       await this.state.verifyC.methods.updateTime().send({ from: this.state.account });
       return Date();
     } catch (error) {
-      alert("Something went wrong (UpdateTime).");
-      return null;
+      if (error.code === 4001) {
+        alert("Did not verify Transaction.");
+        return null;
+      } else {
+        alert("UpdateTime: Something unexpected happened")
+        console.error(error);
+      }
     }
   }
 
@@ -112,8 +128,27 @@ class App extends Component {
       }
       this.setState({ coins: wallet });
     } catch (error) {
-      console.log(error);
-      alert("Something went wrong (updateCoins)");
+      alert("UpdateCoins: Something unexpected happened");
+      console.error(error);
+    }
+  }
+  
+  mint = async (address, amount, senderConditions, receiverConditions) => {
+    try {
+      await this.state.bankC.methods.mint(address, amount, senderConditions, receiverConditions).send({from: this.state.account});
+      return true;
+    } catch(error) {
+      if (error.code === 'INVALID_ARGUMENT') {
+        alert("The selected address does not exist");
+        return false;
+      } else if (error.code === 4001) {
+        alert("Did not verify Transaction");
+        return false;
+      } else {
+        alert("Mint: Something unexpected happened");
+        console.error(error);
+        return false;
+      }
     }
   }
 
@@ -123,8 +158,17 @@ class App extends Component {
       await this.updateCoins();
       return true;
     } catch(error) {
-      console.log(error);
-      alert("Something went wrong (permit)")
+      if (error.code === 'INVALID_ARGUMENT') {
+        alert("The selected address does not exist");
+        return false;
+      } else if (error.code === 4001) {
+        alert("Did not verify Transaction");
+        return false;
+      } else {
+        alert("Permit: Something unexpected happened")
+        console.error(error);
+        return false;
+      }
     }
   }
 
@@ -133,16 +177,21 @@ class App extends Component {
       await this.state.bankC.methods.normalTransfer(address, IDs).send({from: this.state.account})
       await this.updateCoins();
     } catch(error) {
-      console.error(error)
       if (error.code === 'INVALID_ARGUMENT') {
-        alert("Check your Inputs.");
+        alert("The selected address does not exist");
         return;
       } else if (error.code === 4001) {
-        alert("Did not verify Transaction.");
+        alert("Did not verify Transaction");
+        return;
+      } else if (error.code === -32603) {
+        let result = extractError(error.message);
+        alert(result);
+        return;
+      } else {
+        alert("NormalTransfer: Something unexpected happened");
+        console.error(error)
         return;
       }
-      alert("Something went wrong (Normal Transfer).");
-      return;
     }
   }
 
@@ -155,16 +204,21 @@ class App extends Component {
       await this.state.bankC.methods.attachTransfer(address, IDs, senderConditions, receiverConditions).send({from: this.state.account})
       await this.updateCoins();
     } catch(error) {
-      console.log(error);
       if (error.code === 'INVALID_ARGUMENT') {
-        alert("Check your Inputs.");
+        alert("The selected address does not exist");
         return;
       } else if (error.code === 4001) {
-        alert("Did not verify Transaction.");
+        alert("Did not verify Transaction");
+        return;
+      } else if (error.code === -32603) {
+        let result = extractError(error.message);
+        alert(result);
+        return;
+      } else {
+        alert("AttachTransfer: Something unexpected happened");
+        console.error(error)
         return;
       }
-      alert("Something went wrong (Attach Transfer).");
-      return;
     }
   }
 
@@ -185,19 +239,8 @@ class App extends Component {
       }
       this.setState({ offers: offers });
     } catch (error) {
-      console.log(error);
-      alert("Something went wrong (updateOffers)");
-    }
-  }
-
-  mint = async (address, amount, senderConditions, receiverConditions) => {
-    try {
-      await this.state.bankC.methods.mint(address, amount, senderConditions, receiverConditions).send({from: this.state.account});
-      return true;
-    } catch(error) {
-      console.log(error);
-      alert("Something went wrong (mint)");
-      return false;
+      alert("UpdateOffers: Something unexpected happened");
+      console.error(error);
     }
   }
 
@@ -208,8 +251,18 @@ class App extends Component {
       await this.updateCoins();
       alert("Congratulations on successfully applying for this offer. Check your bank account to see your new currency.")
     } catch(error) {
-      console.log(error);
-      alert("You don't fullfil all conditions.");
+      if (error.code === 4001) {
+        alert("Did not verify Transaction");
+        return;
+      } else if (error.code === -32603) {
+        let result = extractError(error.message);
+        alert(result);
+        return;
+      } else {
+        alert("ApplyOffer: Something unexpected happened");
+        console.error(error)
+        return;
+      }
     }
   }
 
@@ -220,9 +273,24 @@ class App extends Component {
       await this.updateOffers();
       return response;
     } catch(error) {
-      console.log(error);
-      alert("Something went wrong (createOffer)");
-      return false;
+      if (error.code === 4001) {
+        alert("Did not verify Transaction");
+        return false;
+      } else if (error.code === -32603) {
+        let result = extractError(error.message);
+        if(result === "Not all receiver-conditions fulfilled"){
+          result = "Some of the selected coins have receiver conditions attached. Smart Sponsor can never fulfill these conditions, so consider using other coins."
+        }
+        if(result === "You do not have permission over all these coins"){
+          result = "Smart sponsor does not have permission to use all selected coins"
+        }
+        alert(result);
+        return false;
+      } else {
+        alert("CreateOffer: Something unexpected happened");
+        console.error(error)
+        return false;
+      }
     }
   }
 
@@ -234,7 +302,7 @@ class App extends Component {
     if (this.state.website === 'bank') {
       activeWebsite = <Bank wallet={this.state.coins} onPermit={this.permit} onNormal={this.normal} onAttach={this.attach} onMint={this.mint} isOwnerB={this.state.isOwnerB}/>;
     } else if (this.state.website === 'sponsor') {
-      activeWebsite = <Sponsor offers={this.state.offers} wallet={this.state.coins} onCreate={this.createOffer} onApply={this.applyOffer}/>;
+      activeWebsite = <Sponsor offers={this.state.offers} wallet={this.state.coins} onCreate={this.createOffer} onApply={this.applyOffer} address={this.state.sponsorC._address}/>;
     } else if (this.state.website === 'verify') {
       activeWebsite = <Verify onAdd={this.addCertificate} onCheck={this.checkCertificate} onTime={this.updateTime} isOwnerV={this.state.isOwnerV} />;
     } else if (this.state.website === 'tutorial') {
@@ -247,6 +315,15 @@ class App extends Component {
       </div>
     );
   };
+}
+
+function extractError(error) {
+  let errorS = String(error);
+  let firstKey = String("transaction: revert ")
+  let pos1 = errorS.search('transaction: revert ') + firstKey.length;
+  let pos2 = errorS.search('",');
+  let result = errorS.substring(pos1, pos2)
+  return result;
 }
 
 export default App;

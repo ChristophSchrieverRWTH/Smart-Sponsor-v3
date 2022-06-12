@@ -4,7 +4,7 @@ import SponsorCoin from "./SponsorCoin.js"
 import { useState } from "react"
 import { GoPlus } from 'react-icons/go'
 
-const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
+const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
   const [create, setCreate] = useState({ selectedCoin: '', senderConditions: "", receiverConditions: "", result: null, coins: [], senderList: [], receiverList: [] });
   let createBox;
   let table;
@@ -24,6 +24,7 @@ const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
 
     table = (
       <div className="ml-5 mr-5 mt-4">
+        <h3 className="text-center">Our address is: {address}</h3>
         <div className="m-3">
           <table className="table ">
             <thead>
@@ -41,6 +42,15 @@ const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
             </tbody>
           </table>
         </div>
+      </div>
+    )
+  }
+
+  if(wallet === "empty"){ // This fixes the NaN problem for the dropdown menu
+    return(
+      <div>
+        {table}
+        <h3 className="text-center">As you do not own any coins, you cannot create a new Sponsorship.</h3>
       </div>
     )
   }
@@ -119,7 +129,7 @@ const Sponsor = ({ offers, onCreate, onApply, wallet }) => {
   const handleCreate = async (e) => {
     e.preventDefault();
     if (create.coins.length === 0) {
-      alert("Select Coins to use");
+      alert("Select at least one coin to donate");
       return;
     }
     const result = await onCreate(create.senderList, create.receiverList, create.coins);

@@ -12,6 +12,14 @@ const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) =>
 
     const handlePermit = async (e) => {
         e.preventDefault();
+        if(!permit.address){
+            alert("Please enter an address");
+            return;
+        }
+        if(checked.length === 0){
+            alert("Please select at least one coin using the checkboxes")
+            return;
+        }
         const response = await onPermit(checked, permit.address);
         setPermit({ address: '', result: response })
         clearChecked();
@@ -19,6 +27,14 @@ const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) =>
 
     const handleNormal = async (e) => {
         e.preventDefault();
+        if(!normal.address){
+            alert("Please enter an address");
+            return;
+        }
+        if(checked.length === 0){
+            alert("Please select at least one coin using the checkboxes")
+            return;
+        }
         await onNormal(checked, normal.address);
         setNormal({ address: ''})
         clearChecked();
@@ -26,6 +42,17 @@ const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) =>
 
     const handleAttach = async (e) => {
         e.preventDefault();
+        if(!attach.address){
+            alert("Please enter an address");
+            return;
+        }
+        if(attach.receiverList.length === 0 && attach.senderList.length === 0){
+            alert("Please enter at least one condition or use the normal transfer")
+        }
+        if(checked.length === 0){
+            alert("Please select at least one coin using the checkboxes")
+            return;
+        }
         await onAttach(checked, attach.address, attach.senderList, attach.receiverList);
         setAttach({address: '', senderConditions: '', receiverConditions: '', senderList: [], receiverList: []})
         clearChecked();

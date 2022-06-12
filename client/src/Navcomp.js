@@ -1,5 +1,18 @@
 import './nav.css'
 const NavComp = ({ active, onClick, user }) => {
+  let message;
+  if(active==='bank'){
+    message = "Welcome to the Bank"
+  } else if(active==='sponsor'){
+    message = "Welcome to Smart Sponsor"
+  } else if (active==='verify'){
+    message = "Welcome to Verification"
+  } else if (active==='tutorial'){
+    message = "Welcome to the Tutorial"
+  } else {
+    message = ""
+  }
+
   return (
     <>
         <nav className="navbar navbar-expand-lg navbar-light rounded" >
@@ -18,7 +31,8 @@ const NavComp = ({ active, onClick, user }) => {
               </li>
             </ul>
         </nav>
-        <h3 className="text-center mt-4">Logged in as: {user}</h3>
+        <h1 className="text-center mt-4">{message}</h1>
+        <h4 className="text-center mt-4">Logged in as: {user}</h4>
     </>
   )
 }

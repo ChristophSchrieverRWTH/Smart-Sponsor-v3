@@ -80,6 +80,14 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
 
   const handleMint = async (e) => {
     e.preventDefault();
+    if(!mint.address){
+      alert("Please enter an Address");
+      return;
+    }
+    if(!mint.amount){
+      alert("Please specify an Amount");
+      return;
+    }
     const response = await onMint(mint.address, mint.amount, mint.senderList, mint.receiverList);
     setMint({ address: '', amount: "", senderConditions: "", receiverConditions: "", senderList: [], receiverList: [], result: response })
   }
