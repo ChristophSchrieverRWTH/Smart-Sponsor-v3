@@ -1,4 +1,3 @@
-import { ImCross } from 'react-icons/im';
 
 const SponsorCoin = ({coin, handler}) => {
 
@@ -9,7 +8,10 @@ const SponsorCoin = ({coin, handler}) => {
 
     return (
         <div>
-            <p style={{ color: 'green' }}><em className="pr-2">{coin}</em><ImCross color={'red'} cursor={'pointer'} onClick={handleFunction} /></p>
+            <p style={{ color: 'green', display: 'inline' }}><em>{coin}</em></p>
+            <button className="btn btn-danger btn-sm ml-2 mb-1" type="button" onClick={handleFunction} cursor={'pointer'}>
+                Remove
+            </button>
         </div>
     )
 }

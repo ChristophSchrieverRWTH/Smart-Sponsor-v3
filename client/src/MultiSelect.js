@@ -1,6 +1,5 @@
 import Condition from "./Condition"
 import { useState } from "react"
-import { GoPlus } from 'react-icons/go'
 
 const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) => {
 
@@ -175,7 +174,9 @@ const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) =>
                                 <div className="input-group">
                                     <input className="form-control" id="inputMultiAttachSender" aria-describedby="MultiAttachSenderHelp" placeholder="Enter Sender Condition"
                                         value={attach.senderConditions} onChange={(e) => setAttach({ ...attach, senderConditions: e.target.value })} ></input>
-                                    <GoPlus size={'2em'} color={'green'} onClick={addAttachSender} cursor={'pointer'} />
+                                    <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addAttachSender} cursor={'pointer'}>
+                                        Confirm Sender Condition
+                                    </button>
                                 </div>
                             </div>
                             {existingSender}
@@ -185,15 +186,18 @@ const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) =>
                                     <input className="form-control mr-2" id="inputMultiAttachReceiver" aria-describedby="MultiAttachReceiverHelp" placeholder="Enter Receiver Condition"
                                         value={attach.receiverConditions} onChange={(e) => setAttach({ ...attach, receiverConditions: e.target.value })} >
                                     </input>
-                                    <GoPlus size={'2em'} color={'green'} onClick={addAttachReceiver} cursor={'pointer'} />
+                                    <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addAttachReceiver} cursor={'pointer'}>
+                                        Confirm Receiver Condition
+                                    </button>
                                 </div>
                             </div>
                             {existingReceiver}
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            
                         </form>
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={handleAttach}>Submit</button>
                     </div>
                 </div>
             </div>

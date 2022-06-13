@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { GoPlus } from 'react-icons/go'
 import Condition from "./Condition"
 
 const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
@@ -168,7 +167,9 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
                             <div className="input-group">
                                 <input className="form-control" id="inputAttachSender" aria-describedby="AttachSenderHelp" placeholder="Enter Sender Condition"
                                     value={attach.senderConditions} onChange={(e) => setAttach({ ...attach, senderConditions: e.target.value })} ></input>
-                                <GoPlus size={'2em'} color={'green'} onClick={addAttachSender} cursor={'pointer'} />
+                                <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addAttachSender} cursor={'pointer'}>
+                                    Confirm Sender Condition
+                                </button>
                             </div>
                         </div>
                         {existingSender}
@@ -178,7 +179,9 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
                                 <input className="form-control mr-2" id="inputAttachReceiver" aria-describedby="AttachReceiverHelp" placeholder="Enter Receiver Condition"
                                     value={attach.receiverConditions} onChange={(e) => setAttach({ ...attach, receiverConditions: e.target.value })} >
                                 </input>
-                                <GoPlus size={'2em'} color={'green'} onClick={addAttachReceiver} cursor={'pointer'} />
+                                <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addAttachReceiver} cursor={'pointer'}>
+                                    Confirm Receiver Condition
+                                </button>
                             </div>
                         </div>
                         {existingReceiver}

@@ -2,7 +2,6 @@ import Offer from "./Offer.js"
 import Condition from "./Condition.js"
 import SponsorCoin from "./SponsorCoin.js"
 import { useState } from "react"
-import { GoPlus } from 'react-icons/go'
 
 const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
   const [create, setCreate] = useState({ selectedCoin: '', senderConditions: "", receiverConditions: "", result: null, coins: [], senderList: [], receiverList: [] });
@@ -31,8 +30,8 @@ const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
               <tr>
                 <th scope="col">Offer ID</th>
                 <th scrope="col">Donated Coins</th>
-                <th scope="col">Sender Conditions</th>
-                <th scope="col">Receiver Conditions</th>
+                <th scope="col">Spender Conditions</th>
+                <th scope="col">Store Conditions</th>
                 <th scope="col">Donor</th>
                 <th scope="col"></th>
               </tr>
@@ -176,8 +175,8 @@ const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
     <div>
       {table}
       <div className="text-center m-5 row">
-        <div className="col-4"></div>
-        <div className="card col-4">
+        <div className="col-3"></div>
+        <div className="card col-5">
           <div className="card-body">
             <h2 className="card-title pb-3">Create new Offer</h2>
             <form onSubmit={handleCreate}>
@@ -187,30 +186,36 @@ const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
                   <select className="form-control" id="inputCreateCoins" value={create.selectedCoin} onChange={(e) => setCreate({ ...create, selectedCoin: e.target.value })}>
                     {coinOptions}
                   </select>
-                  <GoPlus size={'2em'} color={'green'} onClick={addCreateCoin} cursor={'pointer'} />
+                  <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addCreateCoin} cursor={'pointer'}>
+                    Confirm Coin
+                  </button>
                 </div>
               </div>
               {existingCoins}
               <div className="form-group">
-                <label htmlFor="inputCreateSender">Sender Conditions</label>
+                <label htmlFor="inputCreateSender">Spender Conditions</label>
                 <div className="input-group">
-                  <input className="form-control" id="inputCreateSender" aria-describedby="CreateSenderHelp" placeholder="Enter Sender Condition"
+                  <input className="form-control" id="inputCreateSender" aria-describedby="CreateSenderHelp" placeholder="Enter Spender Condition"
                     value={create.senderConditions} onChange={(e) => setCreate({ ...create, senderConditions: e.target.value })} ></input>
-                  <GoPlus size={'2em'} color={'green'} onClick={addCreateSender} cursor={'pointer'} />
+                  <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addCreateSender} cursor={'pointer'}>
+                    Confirm Spender Condition
+                  </button>
                 </div>
               </div>
               {existingSender}
               <div className="form-group">
-                <label htmlFor="inputCreateReceiver">Receiver Conditions</label>
+                <label htmlFor="inputCreateReceiver">Store Conditions</label>
                 <div className="input-group">
-                  <input className="form-control mr-2" id="inputCreateReceiver" aria-describedby="CreateReceiverHelp" placeholder="Enter Receiver Condition"
+                  <input className="form-control mr-2" id="inputCreateReceiver" aria-describedby="CreateReceiverHelp" placeholder="Enter Store Condition"
                     value={create.receiverConditions} onChange={(e) => setCreate({ ...create, receiverConditions: e.target.value })} >
                   </input>
-                  <GoPlus size={'2em'} color={'green'} onClick={addCreateReceiver} cursor={'pointer'} />
+                  <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addCreateReceiver} cursor={'pointer'}>
+                    Confirm Store Condition
+                  </button>
                 </div>
               </div>
               {existingReceiver}
-              <button type="submit" className="btn btn-primary">Submit</button>
+              <button type="submit" className="btn btn-primary mt-3">Submit</button>
             </form>
             {createBox}
           </div>

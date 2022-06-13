@@ -3,7 +3,6 @@ import "./Bank.css"
 import MultiSelect from "./MultiSelect.js"
 import Condition from "./Condition.js"
 import { useState } from "react"
-import { GoPlus } from 'react-icons/go'
 
 const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
   const [mint, setMint] = useState({ address: '', amount: "", senderConditions: "", receiverConditions: "", senderList: [], receiverList: [], result: null })
@@ -139,7 +138,9 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
                 <div className="input-group">
                   <input className="form-control" id="inputMintSender" aria-describedby="MintSenderHelp" placeholder="Enter Sender Condition"
                     value={mint.senderConditions} onChange={(e) => setMint({ ...mint, senderConditions: e.target.value })} ></input>
-                  <GoPlus size={'2em'} color={'green'} onClick={addMintSender} cursor={'pointer'} />
+                  <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addMintSender} cursor={'pointer'}>
+                    Confirm Sender Condition
+                  </button>
                 </div>
               </div>
               {existingSender}
@@ -148,7 +149,9 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
                 <div className="input-group">
                   <input className="form-control" id="inputMintReceiver" aria-describedby="MintReceiverHelp" placeholder="Enter Receiver Condition"
                     value={mint.receiverConditions} onChange={(e) => setMint({ ...mint, receiverConditions: e.target.value })} ></input>
-                  <GoPlus size={'2em'} color={'green'} onClick={addMintReceiver} cursor={'pointer'} />
+                  <button className="btn btn-success ml-2" type="button" color={'green'} onClick={addMintReceiver} cursor={'pointer'}>
+                    Confirm Receiver Condition
+                  </button>
                 </div>
               </div>
               {existingReceiver}
