@@ -116,7 +116,7 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handlePermit}>Confirm</button>
+                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handlePermit}>Submit</button>
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleNormal}>Confirm</button>
+                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleNormal}>Submit</button>
                     </div>
                 </div>
             </div>
