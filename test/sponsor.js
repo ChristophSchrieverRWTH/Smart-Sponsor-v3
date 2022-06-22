@@ -38,7 +38,7 @@ contract("Sponsor", (accounts) => {
 
     it("lets users apply for offers", async() => {
         await truffleAssert.reverts(sponsor.applyOffer(0, {from:user3}), "You do not fullfill all conditions");
-        await verify.addCertificate(user3, 'abc');
+        await verify.addCertificate(user3, 'abc', 1);
         await sponsor.applyOffer(0, {from:user3});
         let wall3 = await bank.wallet({from:user3});
         assert.equal(wall3.length, 2, "wallet size incorrect 3");

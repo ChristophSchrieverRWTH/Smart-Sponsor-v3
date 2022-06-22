@@ -16,7 +16,7 @@ contract("Bank", (accounts) => {
         verify = await Verify.deployed();
         bank = await Bank.deployed();
         await bank.setVerifier(verify.address);
-        verify.addCertificate(user4, "def");
+        verify.addCertificate(user4, "def", 1);
     });
 
     it("correctly mints coins", async () => {
@@ -64,7 +64,7 @@ contract("Bank", (accounts) => {
         assert.equal(wall4[0].coinID, 1, "wrong coin user4");
         // check if conditions work
         await truffleAssert.reverts(bank.normalTransfer(user4, [3], {from:user3}), "Not all sender-conditions fulfilled");
-        await verify.addCertificate(user3, 'abc');
+        await verify.addCertificate(user3, 'abc', 1);
         await bank.normalTransfer(user4, [3], {from:user3});
         let wall3 = await bank.wallet({from:user3});
         assert.equal(wall3.length, 0, "wallet should be empty");

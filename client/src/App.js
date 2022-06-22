@@ -36,10 +36,22 @@ class App extends Component {
         SponsorContract.abi,
         deployedNetworkS && deployedNetworkS.address,
       );
+      // This Block only works in the test enviroment and is only for demonstration purposes
       const ownerV = await verifyInstance.methods.owner().call();
       const isOwnerV = (ownerV === accounts[0]);
       const ownerB = await bankInstance.methods.owner().call();
       const isOwnerB = (ownerB === accounts[0]);
+      const bankExists = await bankInstance.methods.verifier().call();
+      if(bankExists === '0x0000000000000000000000000000000000000000'){ // Sets up correct addresses, only for demonstration purpose!!
+        if(isOwnerV){
+          alert("Confirm the following three transactions to set the addresses for the contracts.")
+          bankInstance.methods.setVerifier(verifyInstance._address).send({from: accounts[0]});
+          sponsorInstance.methods.setVerifier(verifyInstance._address).send({from: accounts[0]});
+          await sponsorInstance.methods.setBank(bankInstance._address).send({from: accounts[0]});
+        } else {
+          alert("Please log in as the Admin account. This is the first listed Account in Ganache. Currently the code won't function.")
+        }
+      }
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, account: accounts[0], verifyC: verifyInstance, bankC: bankInstance, sponsorC: sponsorInstance, isOwnerV, isOwnerB, });
@@ -58,9 +70,15 @@ class App extends Component {
     this.setState({ website: choice });
   }
 
-  addCertificate = async (address, condition) => {
+  addCertificate = async (address, condition, timer) => {
     try {
-      const response = await this.state.verifyC.methods.addCertificate(address, condition).send({ from: this.state.account });
+      let expiry = calculateExpiry(timer);
+      console.log(expiry)
+      if(expiry < 0){
+        alert("The given date has already passed.");
+        return false;
+      }
+      const response = await this.state.verifyC.methods.addCertificate(address, condition, expiry).send({ from: this.state.account });
       return response.transactionHash;
     } catch (error) {
       if (error.code === 'INVALID_ARGUMENT') {
@@ -325,6 +343,17 @@ function extractError(error) {
   let pos2 = errorS.search('",');
   let result = errorS.substring(pos1, pos2)
   return result;
+}
+
+function calculateExpiry(target) {
+  let date = new Date(target);
+  let dd = String(date.getDate()).padStart(2, '0');
+  let mm = String(date.getMonth()).padStart(2, '0');
+  let yyyy = date.getFullYear();
+  date = new Date(yyyy, mm, dd, 0, 0, 0, 0);
+  let today = new Date();
+  let expiry = parseInt(((date.getTime() - today.getTime()) / 1000));
+  return expiry;
 }
 
 export default App;

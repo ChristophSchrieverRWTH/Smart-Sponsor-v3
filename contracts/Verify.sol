@@ -9,7 +9,7 @@ contract Verify is Ownable {
     bytes32[] public certificateArray; 
     uint256 private certificateLength = 30; // this is in seconds
 
-    function addCertificate(address _user, string memory _condition) public onlyOwner returns (bytes32) {
+    function addCertificate(address _user, string memory _condition, uint256 _expiry) public onlyOwner returns (bytes32) {
         // Confirm condition string is not empty string
         require(keccak256(abi.encodePacked(_condition)) != keccak256(abi.encodePacked('')), "Cannot verify empty conditions");
         // Confirm user is actual account
@@ -17,7 +17,11 @@ contract Verify is Ownable {
         // Hash over user and condition and set hash in lookup-table
         bytes32 newCertificate = calculateHash(_user, _condition);
         // Set time for this certificate to be valid
-        validTime[newCertificate] = (block.timestamp + certificateLength);
+        if(_expiry < certificateLength){
+            validTime[newCertificate] = (block.timestamp + certificateLength);
+        } else {
+            validTime[newCertificate] = (block.timestamp + _expiry);
+        }
         if(!certificates[newCertificate]){
             certificates[newCertificate] = true;
             certificateArray.push(newCertificate);

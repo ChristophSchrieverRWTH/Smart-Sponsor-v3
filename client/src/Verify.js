@@ -3,7 +3,7 @@ import { BsAlarm } from 'react-icons/bs'
 
 const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
   const [check, setCheck] = useState({ address: '', condition: '', result: null })
-  const [add, setAdd] = useState({ address: '', condition: '', result: '' })
+  const [add, setAdd] = useState({ address: '', condition: '', result: '', timer: ''})
   const [time, setTime] = useState({ result: null })
   let checkBox;
   let addBox;
@@ -20,8 +20,12 @@ const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
       alert("Please enter Conditions");
       return;
     }
-    const response = await onAdd(add.address, add.condition); // maybe check empty response
-    setAdd({ address: '', condition: '', result: response })//TODO});
+    if (!add.timer) {
+      alert("Please specify a date of expiry");
+      return;
+    }
+    const response = await onAdd(add.address, add.condition, add.timer);
+    setAdd({ address: '', condition: '', result: response, timer: ''});
   }
 
   const handleCheck = async (e) => {
@@ -101,6 +105,11 @@ const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
             <input className="form-control" id="inputAddCondition" placeholder="Enter Conditions to Verify"
               value={add.condition} onChange={(e) => setAdd({ ...add, condition: e.target.value })}></input>
           </div>
+          <div className="form-group">
+            <label htmlFor="inputAddTimer">Expiry Date</label>
+            <input className="form-control" id="inputAddCondition" placeholder="Enter Conditions to Verify" type="date"
+              value={add.timer} onChange={(e) => setAdd({ ...add, timer: e.target.value })}></input>
+          </div>          
           <button type="submit" className="btn btn-primary">Submit</button>
         </form>
         {addBox}
