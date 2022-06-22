@@ -199,11 +199,11 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
     transactionHTML = (
         <div>
             <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + coin.coinID + "normalModal"}>
-                Normal Transfer
+                Transfer without new Conditions
             </button>
             <br />
             <button type="button" className="btn btn-primary mt-1" data-toggle="modal" data-target={"#" + coin.coinID + "attachModal"}>
-                Transfer and Attach
+                Transfer and attach new Conditions
             </button>
         </div>
 

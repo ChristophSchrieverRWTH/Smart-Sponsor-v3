@@ -60,9 +60,8 @@ class App extends Component {
 
   addCertificate = async (address, condition) => {
     try {
-      await this.state.verifyC.methods.addCertificate(address, condition).send({ from: this.state.account });
-      const response = await this.state.verifyC.methods.addCertificate(address, condition).call();
-      return response;
+      const response = await this.state.verifyC.methods.addCertificate(address, condition).send({ from: this.state.account });
+      return response.transactionHash;
     } catch (error) {
       if (error.code === 'INVALID_ARGUMENT') {
         alert("The selected address does not exist");
@@ -174,7 +173,8 @@ class App extends Component {
 
   normal = async (IDs, address) => {
     try {
-      await this.state.bankC.methods.normalTransfer(address, IDs).send({from: this.state.account})
+      const result = await this.state.bankC.methods.normalTransfer(address, IDs).send({from: this.state.account})
+      alert("Transaction succesfull. Transaction Hash: " + result.transactionHash);
       await this.updateCoins();
     } catch(error) {
       if (error.code === 'INVALID_ARGUMENT') {
@@ -201,7 +201,8 @@ class App extends Component {
         alert("Specify Coins to Transfer")
         return;
       }
-      await this.state.bankC.methods.attachTransfer(address, IDs, senderConditions, receiverConditions).send({from: this.state.account})
+      const result = await this.state.bankC.methods.attachTransfer(address, IDs, senderConditions, receiverConditions).send({from: this.state.account});
+      alert("Transaction succesfull. Transaction Hash: " + result.transactionHash);
       await this.updateCoins();
     } catch(error) {
       if (error.code === 'INVALID_ARGUMENT') {

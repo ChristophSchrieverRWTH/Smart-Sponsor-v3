@@ -55,7 +55,7 @@ const Verify = ({ onAdd, onCheck, onTime, isOwnerV }) => {
     } else {
       addBox = (
         <div className="alert alert-success mt-3" role="alert">
-          New Certificate {add.result} successfully added.
+          New Certificate successfully added. Transaction Hash: {add.result}
         </div>)
     }
   }
