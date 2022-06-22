@@ -10,11 +10,15 @@ const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
 
   if (offers === 'empty') { // TO-DO
 
-    table = (<div className="page-hero d-flex align-items-center justify-content-center mt-5">
-      <h1>
-        <em>There are currently no offers.</em>
-      </h1>
+    table = (<div>
+      <h3 className="text-center mt-4">Our address is: {address}</h3>
+      <div className="page-hero d-flex align-items-center justify-content-center mt-5">
+        <h1>
+          <em>There are currently no offers.</em>
+        </h1>
+      </div>
     </div>
+
     )
   } else {
     let tablebody = offers.map((off) => (
@@ -45,8 +49,8 @@ const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
     )
   }
 
-  if(wallet === "empty"){ // This fixes the NaN problem for the dropdown menu
-    return(
+  if (wallet === "empty") { // This fixes the NaN problem for the dropdown menu
+    return (
       <div>
         {table}
         <h3 className="text-center">As you do not own any coins, you cannot create a new Sponsorship.</h3>
@@ -132,7 +136,7 @@ const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
       return;
     }
     const result = await onCreate(create.senderList, create.receiverList, create.coins);
-    setCreate({result: result, selectedCoin: '', senderConditions: "", receiverConditions: "", coins: [], senderList: [], receiverList: [] });
+    setCreate({ result: result, selectedCoin: '', senderConditions: "", receiverConditions: "", coins: [], senderList: [], receiverList: [] });
   }
 
   if (create.result !== null) {
