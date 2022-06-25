@@ -36788,12 +36788,12 @@
         }
       },
       "links": {},
-      "address": "0x407Ac06e1da800E1Eb7940C575274Fd0f678ECEe",
-      "transactionHash": "0x54559910f74116e3210342a70beacfcb459017479e7ecf15c4d35ffbc9d4530a"
+      "address": "0xffA2df2cA06C9430bAEFA228af63ea224E5bA981",
+      "transactionHash": "0xa7effd85023057962cf7da079a3b864735a16bfb690cbc6c232e169b2ad4800b"
     }
   },
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-06-22T16:25:03.902Z",
+  "updatedAt": "2022-06-22T18:00:23.311Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

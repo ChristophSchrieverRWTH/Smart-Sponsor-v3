@@ -1,0 +1,53 @@
+\chapter{Realisation}
+This chapter details all the information about the realisation of Smart Sponsor. After looking at the chosen programming languages, framework, and IDE, the implementation follows. Design decisions of some impact are expanded upon. Finally, the project will be analyzed from a performance aspect. The conclusions following this analysis will be detailed in the next chapter. The repository of the final code can be found here:
+\url{https://github.com/ChristophSchrieverRWTH/Smart-Sponsor-v3}
+\section{Tool Selection}
+Smart Sponsor's development was separated into the front- and the back-end development. The back-end uses a blockchain for its' data storage. Due to familiarity with curly-bracket languages and the availability of development tools the blockchain of choice was "Ethereum" using its appended programming language "Solidity." The chosen development environment was "Truffle", as it supports unit tests using the "Mocha" testing framework and "Chai" and easy access to a test blockchain. For most of the development the test blockchain "Ganache" was used. For some parts, the browser-based IDE Remix\cite{remix} was used. The back end of the server was run using Node. The full list of packages can be found in the repository.\\
+The front end was developed using "Visual Studio Code" as its IDE. The user interface was created using "Bootstrap" and "React." React allows for creating a single-page application and allows for the grouping of HTML elements into components. These components give more structure to the code. The front-end logic was implemented using "JavaScript." Front-end access to the blockchain runs through the browser extension "MetaMask."\\
+The version control of Smart Sponsor was secured using GitHub.
+\section{Back-End Implementation}
+The back-end segment will deal with the Solidity code and some of the unit tests. The front-end part will deal with the flow of information running through the different React components.
+\subsection{Verification}
+As verification is one of the fundamental concepts of Smart Sponsor its implementation stands as the foundation. In this way, the verification can also be seen as an axiom to any of the transactions of the banking system or Smart Sponsor. The smart contract needs to allow adding and checking certificates, but it also needs to accommodate certificates expiring. The process of creating a certificate is detailed in algorithm 1. Checking a certificate requires recalculating the hash. Update which certificates have expired works as described in algorithm 2. Both functions that write on the blockchain are restricted to be useable by the owner only. This security is secured by Openzeppelin's "Ownable" smart contract\cite{Zeppelin}.\\
+\begin{algorithm}
+\caption{Creating a Certificate}\label{alg:create}
+\begin{algorithmic}
+\Require $condition \neq null$
+\Require $user \neq null$
+\Require $expiryDate \neq null$
+\State $concat \gets concatenate(condition, user)$ 
+\State $certificate \gets hash(concat)$
+\If{$certificateTable[certificate] = false$}
+    \State $certificateTable[certificate] \gets true $
+\EndIf
+\State $expiryTable[certificate] \gets expiryDate$
+\end{algorithmic}
+\end{algorithm}
+\\
+The central piece of the verification process is Solidity's hashing algorithm. The keccak256 function belongs to the same family as all the SHA-3 functions do. Apart from being irreversible it also boasts security against collision attacks and length extension attacks. The input we give is a string that results from the concatenation of the user's address and the string representing the condition e.g. "\emph{Younger than 23 years old.}"\\
+To concatenate strings the \emph{abi.encode} and \emph{abi.encodePacked} functions exist as default functions given by Solidity. The main difference is in how strings smaller than 32 bytes are handled. Abi.encode always pads up to 32 bytes. The latter is more space-efficient but as it does not pad empty bits the resulting string might run into collision danger:
+\begin{equation*}
+    keccak(AAA, BBB) \Longleftrightarrow keccak(AA, ABBB)
+\end{equation*}
+Still, this more compact version is usable without a problem, as we know the length of one of our input strings. An Ethereum address is always 20 bytes large. This represents 40 hex characters. Therefore it is always clear where the address ends and where the condition string starts.\\
+\begin{algorithm}
+\caption{Expiry of Certificates}\label{alg:update}
+\begin{algorithmic}
+\State $now = block.timestamp$
+\ForEach{$certificate \in certificateTable$}
+\If{$expiryTable[certificate] < now$}
+\State $certificateTable[certificate] \gets false$
+\EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+\\
+With the hashing algorithm established, the subject of expiry dates remains. Solidity's internal representation of time relies on the timestamp of the block that is currently being mined. While Ethereum uses the UNIX timestamp to denote this time, it can not be guaranteed that all computers are in agreement with what that currently is. This small discrepancy should only become a problem if enough members of the network create a false consensus on what the current timestamp is. At worst this would cause certificates to expire prematurely, which while a nuisance does not pose a security threat. How long a certificate should be set valid depends on the type of certificate. Especially time-sensitive conditions like those pertaining to age or expiry of documents are to be treated carefully. The hashing over conditions is used to increase the privacy of conditions so setting certificates to exact expiration dates might reveal more information than is necessary. The update function needs to be called once a day. This function can only be called by the owner of the contract leading to higher security.\\
+\\
+In this version of Smart Sponsor, any possible condition is represented through a string. There are no semantic implications given by this string apart from its existence in the database. It would be possible to replace the string with a more complex datatype detailing eligible values for set keys. In this way checking if a condition is fulfilled could be achieved quickly as the possible values for a key are effectively just a lookup. At the same time, this approach limits the possibilities of what can be proven by a certificate which would reduce the applicability of the financial structure outside of Smart Sponsor.\\ 
+\\
+Another design decision is the question of how granular conditions should be made.
+Smart Sponsor's performance increases if conditions are modeled by strings containing delimiters, but to allow users more reusability, both the back-end- and front-end implementations allow for independent condition strings, while not preventing the user from concatenating conditions into a singular string. \\
+It is possible to have $n$ conditions all be contained in a single string of length $L = n + n*delimiter$. As the result of the hashing operation, the result is always a 32bytes-string, the length of the input stream is irrelevant. This approach would lead to faster performance as instead of $n$ certificate checks, now only one is necessary. On the other hand, this approach would reduce versatility. Assuming a user is only missing a single certificate out of $m$ conditions this approach would warrant an entirely new certificate leading to bloat in the database and more strain on the user. What kind of certificate to use should be decided on a case-by-case basis. If a certificate is not due to expire soon and can be reused frequently, combining it into a longer string may be advisable. For example: \emph{store=food; fairTrade=true} with ";" working as a delimiter. If delimited strings are used to denote multiple conditions, said string should be made easily available to the public, possibly being denoted by an abbreviation. On the other hand, certificates that express a more fleeting condition like age or enrollment in a certain university should consequently be written as a singular string, also allowing separate expiry dates for separate conditions.\\
+\\
+The last major design decision deals with the process of certificates expiring. The check for a certificate's expiry date could be done during the lookup in the database. In this way, there are fewer function calls needed to ensure certificates expire. At the same time, this approach slows down any transaction that needs to verify a certificate. For this reason, the choice of an update function was taken. This approach needs either a script or a person to execute this method once per day leading to a marginal increase in effort once a day but allowing faster checking of certificates.

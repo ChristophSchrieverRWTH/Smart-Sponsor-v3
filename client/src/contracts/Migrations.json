@@ -2305,12 +2305,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x64AeC9DEe47A0a1762c41a778a221Ab9478f06E4",
-      "transactionHash": "0x9c92ebff6de303c39bf4f57fd875ef360043c073fa3e8c2477f41c0caa7509ae"
+      "address": "0xB270056E4F6195a324C7F0880Da5d71BDfA0c8b5",
+      "transactionHash": "0x33f63d060ea5194aefb661436487fecae0340a68332544206fd5de871b7aab56"
     }
   },
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-06-22T16:25:06.162Z",
+  "updatedAt": "2022-06-22T18:00:25.605Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

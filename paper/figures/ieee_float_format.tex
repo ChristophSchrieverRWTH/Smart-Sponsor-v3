@@ -1,0 +1,13 @@
+\begin{tikzpicture}
+[node distance=0cm]
+\tikzset{rectangle_black/.style = {rectangle, minimum width=1cm, minimum height=0.75cm, text centered, draw=black, fill=white}};
+\tikzset{rectangle_white/.style = {rectangle, minimum width=1cm, minimum height=0.75cm, text centered, draw=none, fill=none}};
+\node (sign) [rectangle_black] {S (sign)};
+\node (exponent) [rectangle_black, right = of sign] {E (biased exponent)};
+\node (fraction) [rectangle_black, right = of exponent] {T (trailing significand field)};
+\node (sign_text) [rectangle_white, above = of sign] {1};
+\node (exponent_text) [rectangle_white, above = of exponent] {$w$};
+\node (fraction_text) [rectangle_white, above = of fraction] {$t=p-1$};
+\node (bits) [rectangle_white, above = of fraction, right = of fraction_text] {bits};
+
+\end{tikzpicture}
