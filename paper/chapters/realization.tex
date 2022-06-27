@@ -10,7 +10,7 @@ The back-end segment will deal with the Solidity code and some of the unit tests
 \subsection{Verification of Conditions}
 As the verification of conditions is one of the fundamental concepts of Smart Sponsor, its implementation stands as the foundation. In this way, the verification can also be seen as an axiom to any of the transactions of the banking system or Smart Sponsor. The smart contract needs to allow adding and checking certificates, but it also needs to accommodate certificates expiring. The process of creating a certificate is detailed in algorithm 1. Checking a certificate requires recalculating the hash. Update which certificates have expired works as described in algorithm 2. Both functions that write on the blockchain are restricted to be useable by the owner only. This security is secured by OpenZeppelin's "Ownable" smart contract\cite{Zeppelin}.\\
 \begin{algorithm}
-\caption{Creating a Certificate}\label{alg:create}
+\caption{Creating a certificate}\label{alg:create}
 \begin{algorithmic}
 \Require $message.sender = Verification.owner$
 \Require $condition \neq null$
@@ -25,15 +25,15 @@ As the verification of conditions is one of the fundamental concepts of Smart Sp
 \end{algorithmic}
 \end{algorithm}
 \\
-After sending a request to get a condition c verified the personnel or program responsible for determining a condition is fulfilled would create a certificate for the address of the user who made this request.\\
-The central piece of adding and verifying certificates in the verification process is Solidity's hashing algorithm. In practice, this function would get called by the third-party verification service. The keccak256 function belongs to the same family as all the SHA-3 functions do. Apart from being irreversible it also boasts security against collision attacks and length extension attacks. The input we give is a string that results from the concatenation of the user's address and the string representing the condition e.g. "\emph{Younger than 23 years old.}"\\
+After sending a request to get a condition verified the personnel or program responsible for determining if a condition is fulfilled would create a certificate for the address of the user who made this request.\\
+The central piece of adding and verifying certificates in the verification process is Solidity's built-in hashing algorithm "keccak256". In practice, this function would get called by the third-party verification service. The keccak256 function belongs to the same family as all the SHA-3 functions do. Apart from being irreversible it also boasts security against collision attacks and length extension attacks. The input we give is a string that results from the concatenation of the user's address and the string representing the condition e.g. "\emph{Younger than 23 years old.}"\\
 To concatenate strings the \emph{abi.encode} and \emph{abi.encodePacked} functions exist as default functions given by Solidity. The main difference is in how strings smaller than 32 bytes are handled. Abi.encode always pads up to 32 bytes. The latter is more space-efficient but as it does not pad empty bits the resulting string might run into collision danger:
 \begin{equation*}
     keccak(AAA, BBB) \Longleftrightarrow keccak(AA, ABBB)
 \end{equation*}
 Still, this more compact version is usable without a problem, as we know the length of one of our input strings. An Ethereum address is always 20 bytes large. This represents 40 hex characters. Therefore it is always clear where the address ends and where the condition string starts.\\
 \begin{algorithm}
-\caption{Expiry of Certificates}\label{alg:update}
+\caption{Expiry of certificates}\label{alg:update}
 \begin{algorithmic}
 \Require $message.sender = Verification.owner$
 \State $now = block.timestamp$
@@ -45,37 +45,38 @@ Still, this more compact version is usable without a problem, as we know the len
 \end{algorithmic}
 \end{algorithm}
 \\
-With the hashing algorithm established, the subject of expiry dates remains. Solidity's internal representation of time relies on the timestamp of the block that is currently being mined. While Ethereum uses the UNIX timestamp to denote this time, it can not be guaranteed that all computers are in agreement with what that currently is. This small discrepancy should only become a problem if enough members of the network create a false consensus on what the current timestamp is. At worst this would cause certificates to expire prematurely, which while a nuisance does not pose a security threat. How long a certificate should be set valid depends on the type of certificate. Especially time-sensitive conditions like those pertaining to age or expiry of documents are to be treated carefully. The hashing over conditions is used to increase the privacy of conditions so setting certificates to exact expiration dates might reveal more information than is necessary. The update function needs to be called once a day. This function can only be called by the owner of the contract leading to higher security.\\
+With the hashing algorithm established, the subject of expiry dates remains. Solidity's internal representation of time relies on the timestamp of the block that is currently being mined. While Ethereum uses the UNIX timestamp to denote this time, it can not be guaranteed that all computers are in agreement with what that currently is. This small discrepancy should only become a problem if enough members of the network create a false consensus on what the current timestamp is. At worst this would cause certificates to expire prematurely which - while a nuisance - does not pose a security threat. How long a certificate should be set valid depends on the type of certificate. Especially time-sensitive conditions like those about age or expiry of documents are to be treated carefully. The hashing over conditions is used to increase the privacy of conditions so setting certificates to exact expiration dates might reveal more information than is necessary. The update function needs to be called once a day. This function can only be called by the owner of the contract leading to higher security.\\
 \\
 In this version of Smart Sponsor, any possible condition is represented through a string. There are no semantic implications given by this string apart from its existence in the database. It would be possible to replace the string with a more complex datatype detailing eligible values for set keys. In this way checking if a condition is fulfilled could be achieved quickly as the possible values for a key are effectively just a lookup. At the same time, this approach limits the possibilities of what can be proven by a certificate which would reduce the applicability of the financial structure outside of Smart Sponsor.\\ 
 \\
 Another design decision is the question of how granular conditions should be made.
 Smart Sponsor's performance increases if conditions are modeled by strings containing delimiters, but to allow users more reusability, both the back-end- and front-end implementations allow for independent condition strings, while not preventing the user from concatenating conditions into a singular string. \\
-It is possible to have $n$ conditions all be contained in a single string of length $L = n + n*delimiter$. As the result of the hashing operation, the result is always a 32bytes-string, the length of the input stream is irrelevant. This approach would lead to faster performance as instead of $n$ certificate checks, now only one is necessary. On the other hand, this approach would reduce versatility. Assuming a user is only missing a single certificate out of $m$ conditions this approach would warrant an entirely new certificate leading to bloat in the database and more strain on the user. What kind of certificate to use should be decided on a case-by-case basis. If a certificate is not due to expire soon and can be reused frequently, combining it into a longer string may be advisable. For example: \emph{store=food; fairTrade=true} with ";" working as a delimiter. If delimited strings are used to denote multiple conditions, said string should be made easily available to the public, possibly being denoted by an abbreviation. On the other hand, certificates that express a more fleeting condition like age or enrollment in a certain university should consequently be written as a singular string, also allowing separate expiry dates for separate conditions.\\
+It is possible to have $n$ conditions all be contained in a single string of length $L = n + n*delimiter$. As the result of the hashing operation is always a 32bytes-string, the length of the input string does not factor into the output. This approach would lead to faster performance as instead of $n$ certificate checks, now only one is necessary. On the other hand, this approach would reduce versatility. Assuming a user is only missing a single certificate out of $m$ conditions this approach would warrant an entirely new certificate leading to bloat in the database and more strain on the user. What kind of certificate to use should be decided on a case-by-case basis. If a certificate is not due to expire soon and can be reused frequently, combining it into a longer string may be advisable. For example: \emph{store=food; fairTrade=true} with ";" working as a delimiter. If delimited strings are used to denote multiple conditions, said string should be made easily available to the public, possibly being denoted by an abbreviation. On the other hand, certificates that express a more fleeting condition like age or enrollment in a certain university should consequently be written as a singular string, also allowing separate expiry dates for separate conditions.\\
 \\
 The last major design decision deals with the process of certificates expiring. The check for a certificate's expiry date could be done during the lookup in the database. In this way, there are fewer function calls needed to ensure certificates expire. At the same time, this approach slows down any transaction that needs to verify a certificate. For this reason, the choice of an update function was taken. This approach needs either a script or a person to execute this method once per day leading to a marginal increase in effort once a day but allowing faster checking of certificates.
 
 \subsection{Financial Structure}
-The underlying financial infrastructure of Smart Sponsor is what enables a proactive implementation of condition-based donations. For ease of reference, the currency detailed in this chapter will henceforth be called "Sponsor Coin." Following a brief consideration of existing token norms, all algorithms dealing with transactions are detailed. Algorithm 3 shows the minting process of new currency. After this algorithm 4 briefly introduces the permission concept, after which algorithms 5 and 6 detail the two transaction methods. The mint function is restricted to only the owner of the smart contract using once again OpenZeppelin\cite{Zeppelin}.\\
+The underlying financial infrastructure of Smart Sponsor is the key that enables a proactive implementation of condition-based donations. For ease of reference, the currency detailed in this chapter will henceforth be called "Sponsor Coin." Following a brief consideration of existing token norms, all algorithms dealing with transactions are detailed. Algorithm 3 shows the minting process of new currency. After this algorithm 4 briefly introduces the permission concept, after which algorithms 5 and 6 detail the two transaction methods. The mint function is restricted to only the owner of the smart contract using once again OpenZeppelin\cite{Zeppelin}.\\
 \\
-Looking at the two most common norms for tokens on blockchains i.e. ERC-20 and ERC-721, neither fully encompass what Sponsor Coin enables. Sponsor Coin is a tokenized form of fiat currency. Every coin is equal in value to every other one. While this at first glance seems similar to ERC-20, the fact that Sponsor Coins can hold vastly different conditions makes them incompatible with this lighter norm. Therefore this approach is a lot closer to ERC-721, also known as Non-Fungible-Token than it is to ERC-20. Every coin is fundamentally different from every other coin. Even if no conditions are attached, they are still separated by their ID. All of them sharing the same value of fiat currency is more of a semantic interpretation than an implemented rule. Yet there exists a need for having different transaction functions, one for normal transactions and one to attach new conditions. Therefore the resulting contract does not follow either norm but it takes a lot of inspiration from ERC-721.\\
+Looking at the two most common norms for tokens on blockchains i.e. ERC-20 and ERC-721, neither fully encompass what Sponsor Coin enables. Sponsor Coin is a tokenized form of fiat currency. Every coin is equal in value to every other one. While this at first glance seems similar to ERC-20, the fact that Sponsor Coins can hold vastly different conditions makes them incompatible with this lighter norm. Therefore this approach is a lot closer to ERC-721, also known as Non-Fungible-Token than it is to ERC-20. Every coin is fundamentally different from every other coin. Even if no conditions are attached, they are still separated by their ID. All of them sharing the same value of fiat currency is more of a semantic interpretation than an implemented rule. Yet there exists a need for having different transaction functions, one for transactions that attach new conditions and one that does not. Therefore the resulting contract does not follow either norm but it takes a lot of inspiration from ERC-721.\\
 \begin{algorithm}
-\caption{Minting new Currency}\label{alg:mint}
+\caption{Minting new currency}\label{alg:mint}
 \begin{algorithmic}
 \Require $message.sender = bankOwner$
 \Require $user \neq null$
 \Require $amount \neq 0$
 \State $counter \gets 0$
 \While{$counter < amount$}
-\State $newCoin \gets new coin(coinID, user, senderCond, receiverCond)$
+\State $newCoin \gets new coin(coinID, senderCond, receiverCond)$
 \State $coinTable[coinID] \gets newCoin$
+\State $ownerTable[coinID] \gets user$
+\State $permitTable[coinID] \gets null$
 \State $coinID \gets coinID + 1$
 \State $counter \gets counter + 1$
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
 \\
-SHOULD THIS BE AFTER ALL ALGORITHMS? 
 At the start of a Sponsor Coin's life stands the minting process. In practice, this function would get called visiting a bank or a banking website. After transferring an appropriate amount of fiat currency the minting process gets initiated. But the person who paid for a Sponsor Coin does not necessarily have to become the owner of said coin. This functionality could already be seen as a form of payment or get used for concepts such as grants or pocket money. Therefore the minting process should also allow adding conditions.\\
 \begin{equation*}
 \begin{array}{c}
@@ -84,6 +85,48 @@ At the start of a Sponsor Coin's life stands the minting process. In practice, t
     mint(condition) \longrightarrow \emph{$User_B$}
 \end{array}
 \end{equation*}
-This can make the process of getting an empty coin transferred to another person a lot quicker also reducing the number of transactions needed on the blockchain. Still, this feature does not have to be used and is only an optional shortcut.\\
+This can make the process of getting an empty coin transferred to another person a lot quicker also reducing the number of transactions needed on the blockchain. Still, this feature does not have to be used and is only an optional shortcut. The owner table exists for quick access when checking ownership. The permit table will be expanded upon following algorithm 4.\\
 On top of the 0-address not being accessible by default on Ethereum, it also doubles as the place a token might end its life cycle at. This burning of a token is something that is not necessarily desired with Smart Coins as the idea is to have this currency circulate. Nonetheless keeping this design avenue open allows for easier modification in the future.\\
-The minting process also dictates how much fiat currency a singular Sponsor Coin represents, though this is not contained in the blockchain. Again there is no right answer. The less a coin represents, the more effort the user has to put in to buy a product. Also increasing the number of coins needed proportionally increases the number of function calls needed adversely affecting performance. On the other hand, the more a coin represents the unwieldier it ends up. A value along the lines of 5€ to 10€ was envisioned while creating donations, but this value would need to be decided on by convention. There are inherent risks of joining the value of Sponsor Coin with the value of fiat currency, as inflation would increase the amount of computing power needed to fulfill transactions, though the ramifications of this fall outside the scope of this chapter.
+The minting process also dictates how much fiat currency a singular Sponsor Coin represents, though this is not contained in the blockchain. Again there is no right answer. The less a coin represents, the more effort the user has to put in to buy a product. Also increasing the number of coins needed proportionally increases the number of function calls needed adversely affecting performance. On the other hand, the more a coin represents the unwieldier it ends up. A value along the lines of 5\EUR{} to 10\EUR{} was envisioned while creating donations, but this value would need to be decided on by convention. There are inherent risks of joining the value of Sponsor Coin with the value of fiat currency, as inflation would increase the amount of computing power needed to fulfill transactions, though the ramifications of this fall outside the scope of this chapter.\\
+\begin{algorithm}
+\caption{Permitting third-party use of currency}\label{alg:permit}
+\begin{algorithmic}
+\Require $user \neq null$
+\Require $targetIDs \neq null$
+\ForEach{$coinID \in targetIDs$}
+\If{$ownerTable[coinID] = message.sender$}
+\State $permitTable[coinID] \gets user$
+\EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+\\
+This function would be called by a user who wants to permit the usage of their Sponsor Coins to a third party. There are two use cases for this: Wanting to permit another user to use your coins or allowing a smart contract to use your coins.\\
+The former allows the third party to use the currency once a certain event has happened. An example of this could be an escrow-based system.\\
+The latter is necessary to circumvent a technical limitation inherent to smart contracts. Assume a normal business transaction of goods being exchanged for money e.g. buying a book. How can this moment of exchange be modeled? In reality, the seller might wait for the buyer to transfer the currency, afterward handing over the wares. This approach is very similar to polling. The seller is waiting for the observed state to change. This approach is not as easily implemented on the blockchain though. Sending the Sponsor Coin first and then calling a function dissociates the two causing a risk of fraud or accidental problems on reverts.\\
+A safer approach would be for the sponsor smart contract to use the transfer methods provided by the banking system. But to do this the bank needs to know that the sponsor contract has been allowed to use certain Sponsor Coins. This functions similarly to direct debit authorisation. This approach is also widely found in existing norms e.g. ERC-20 and ERC-721. While in theory permissions could be implemented in a transitive manner, Smart Sponsor's implementation allows no more than one permitted address per coin.\\
+\begin{algorithm}
+\caption{Transferring Smart Coins without new conditions}\label{alg:normaö}
+\begin{algorithmic}
+\Require $user \neq null$
+\Require $targetIDs \neq null$
+\ForEach{$coinID \in targetIDs$}
+\If{$ownerTable[coinID] = message.sender$ \textbf{or}\\ 
+\hspace{30pt}$permitTable[coinID] = message.sender$}
+\ForEach{$condition \in coinTable[coinID].senderCond$}
+\Ensure $verification.checkCertificate(owner[coinID], condition) = true$
+\EndFor
+\ForEach{$condition \in coinTable[coinID].receiverCond$}
+\Ensure $verification.checkCertificate(user, condition) = true$
+\EndFor
+\State $ownerTable[coinID] \gets user$
+\State $permitTable[coinID] \gets null$
+\State $coinTable[coinID].senderCond \gets null$
+\State $coinTable[coinID].receiverCond \gets null$
+\EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+\\
+In practice, this function gets called both by users and smart contracts. This function resets the conditions after the transfer. There are no limitations on what Sponsor Coins can be sent, as long as the user calling this function has permission to use said coins. Any combination of sender conditions and receiver conditions is permissible as long as the owner of the coins fulfills all conditions. If a third party has initiated a transfer it is still the owner who has to meet the conditions to ensure that no abusable loopholes exist.\\
+The performance of this function is tied to how many conditions are attached. The implementation of Smart Sponsor is such, that it allows all coins to be mutually distinct. Another way of implementing this function might force all coins to have the same conditions attached. This would speed up the run time by the number of coins, as now all conditions only have to be ascertained once. As Smart Sponsor is a prototype, a more general approach was taken, allowing for arbitrarily complex combinations at the expense of speed. Another possible option could be to hash over all conditions a coin $C_1$ has set and store these temporarily. Then before checking if the next coin $C_2$ fulfills any conditions, hash over its conditions. Then compare these to the hashes stored so far. If they match skip the verification for this coin. In this case, unlike detailed in the certificate algorithm, it would be of importance to reconsider whether to use \emph{abi.encode} or \emph{abi.encodePacked} as now a risk of collision exists.
