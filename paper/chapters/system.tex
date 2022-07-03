@@ -8,7 +8,7 @@ This submitted string is a hash over the conditions and the wallet address of th
     \centering
     \includegraphics[scale=0.45]{figures/verification.PNG}  
     \caption{Verification process for any user}
-    \label{fig:my_label}
+    \label{fig:verifyModel}
 \end{figure}
 \emph{Remaining questions 1: When should the verification expire? How should the conditions be implemented? How will this lookup table be implemented?}
 \section*{Underlying Financial Structure}
@@ -17,14 +17,14 @@ The underlying financial structure (from here on called the bank) uses tokens to
     \centering
     \includegraphics[scale=0.45]{figures/financeUML.PNG}  
     \caption{Class structure of the financial structure}
-    \label{fig:my_label}
+    \label{fig:financeUML}
 \end{figure}
 What differentiates these tokens from other systems, is the addition of a transfer method for adding conditions.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.45]{figures/transfer.PNG}  
     \caption{Transaction process with possibility of attaching new conditions}
-    \label{fig:my_label}
+    \label{fig:transactionModel}
 \end{figure}
 This method, as detailed in Fig 3.3, transfers the token to the new owner and attaches conditions in the sender/receiver-condition attribute of the transferred coin.
 As soon as conditions are attached to a coin, the transfer methods now need to reference if the resulting hashes are stored with the verifier.
@@ -37,5 +37,5 @@ Smart Sponsor is implemented as a smart contract. The donation process is depict
     \centering
     \includegraphics[scale=0.45]{figures/Smart Sponsor.png}  
     \caption{Process of donating currency with Smart Sponsor}
-    \label{fig:my_label}
+    \label{fig:donationModel}
 \end{figure}
