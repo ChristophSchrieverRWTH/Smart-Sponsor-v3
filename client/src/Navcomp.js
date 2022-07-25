@@ -1,6 +1,8 @@
 import './nav.css'
-const NavComp = ({ active, onClick, user }) => {
+
+const NavComp = ({ active, onClick, user, username, changeName }) => {
   let message;
+  let showUser;
   if(active==='bank'){
     message = "Welcome to the Bank"
   } else if(active==='sponsor'){
@@ -11,6 +13,17 @@ const NavComp = ({ active, onClick, user }) => {
     message = "Welcome to the Tutorial"
   } else {
     message = ""
+  }
+
+  if(username===""){
+    showUser = user;
+  } else {
+    showUser = username;
+  }
+
+  const handleName = async () => {
+    let newName = prompt("Please select your new username.");
+    await changeName(newName);
   }
 
   return (
@@ -32,7 +45,20 @@ const NavComp = ({ active, onClick, user }) => {
             </ul>
         </nav>
         <h1 className="text-center mt-4">{message}</h1>
-        <h4 className="text-center mt-4">Logged in as: {user}</h4>
+        <div className='text-center row'>
+          <div className="col-2">
+          </div>
+          <div className="text-center col-6">
+            <h2 className="text-center mtr-4">Logged in as: {showUser}</h2>
+          </div>
+          <div className="text-center col-2">
+            <button type="button text-center" className="btn btn-primary" onClick={handleName}>Change Username</button>
+          </div>
+          <div className="col-2">
+          </div>
+        </div>
+
+
     </>
   )
 }

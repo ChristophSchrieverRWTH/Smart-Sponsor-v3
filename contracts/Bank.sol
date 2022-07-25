@@ -12,6 +12,7 @@ contract Bank is Ownable {
         string[] receiverConditions;
     }
 
+    mapping(address=>string) public names;
     uint256 public coinID;
     Coin[] public coins;
     address[] public owners;
@@ -22,6 +23,11 @@ contract Bank is Ownable {
     function setVerifier(address _verifier) public onlyOwner() {
         require(_verifier != address(0), "Cannot set Verifier to this address");
         verifier = VerifyBank(_verifier);
+    }
+
+    function setName(string memory _name) public{
+        require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked('')));
+        names[msg.sender] = _name;
     }
 
     // WARNING: In Theory it is possible to set singular strings to the empty string. Checking this in the backend is too 

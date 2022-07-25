@@ -11,7 +11,7 @@ const Sponsor = ({ offers, onCreate, onApply, wallet, address }) => {
   if (offers === 'empty') { // TO-DO
 
     table = (<div>
-      <h3 className="text-center mt-4">Our address is: {address}</h3>
+      <h3 className="text-center mt-2">Our address is: {address}</h3>
       <div className="page-hero d-flex align-items-center justify-content-center mt-5">
         <h1>
           <em>There are currently no offers.</em>

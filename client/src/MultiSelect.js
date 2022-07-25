@@ -209,21 +209,21 @@ const MultiSelect = ({ onPermit, onNormal, onAttach, checked, clearChecked }) =>
             <div className="col-2" />
             <div className="col-2">
                 {permitModal}
-                <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#MultiPermitModal"}>
+                <button type="button" className="btn btn-success" data-toggle="modal" data-target={"#MultiPermitModal"}>
                     Permit selected Coins
                 </button>
             </div>
             <div className="col-1" />
             <div className="col-2">
                 {normalModal}
-                <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#MultiNormalModal"}>
+                <button type="button" className="btn btn-success" data-toggle="modal" data-target={"#MultiNormalModal"}>
                     Transfer selected Coins <br/> without new Conditions
                 </button>
             </div>
             <div className="col-1" />
             <div className="col-2">
                 {attachModal}
-                <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#MultiAttachModal"}>
+                <button type="button" className="btn btn-success" data-toggle="modal" data-target={"#MultiAttachModal"}>
                     Transfer selected Coins <br/> and attach new Conditions
                 </button>
             </div>
