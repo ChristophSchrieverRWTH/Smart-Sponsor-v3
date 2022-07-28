@@ -193,7 +193,7 @@ const Bank = ({ wallet, onPermit, onNormal, onAttach, onMint, isOwnerB }) => {
               <th scope="col">Receiver Conditions</th>
               <th scrope="col">Transasctions</th>
               <th scope="col" className="text-center">Permitted Address</th>
-              <th scope="col" className="text-center">Select for Multiselect </th>
+              <th scope="col" className="text-center" style={{ color: 'green'}}>Select for Multiselect </th>
             </tr>
           </thead>
           <tbody>

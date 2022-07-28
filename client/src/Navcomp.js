@@ -52,7 +52,7 @@ const NavComp = ({ active, onClick, user, username, changeName }) => {
             <h2 className="text-center mtr-4">Logged in as: {showUser}</h2>
           </div>
           <div className="text-center col-2">
-            <button type="button text-center" className="btn btn-primary" onClick={handleName}>Change Username</button>
+            <button type="button text-center" className="btn btn-warning" onClick={handleName}>Change Username</button>
           </div>
           <div className="col-2">
           </div>

@@ -257,7 +257,7 @@ const Coin = ({ coin, onPermit, onNormal, onAttach, onCheck, isChecked }) => {
                 {permitHTML}
             </td>
             <td>
-                <div className="form-check text-center">
+                <div className="form-check text-center" style={{ color: 'green'}}>
                     <input className="form-check-input" type="checkbox" checked={isChecked} onChange={(e) => {
                         handleCheck();
                         setCheck({ checked: !check.checked })
